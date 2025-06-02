@@ -6,6 +6,7 @@ import '../SearchOverlay.css';
 import { withTranslation } from 'react-i18next';
 
 const MAX_RECENT_SEARCHES = 10;
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 class SearchOverlay extends Component {
     constructor(props) {
@@ -150,7 +151,7 @@ class SearchOverlay extends Component {
         try {
             const params = new URLSearchParams();
             params.append('keyword', trimmedQuery);
-            const response = await axios.get(`http://localhost:5000/api/festivals?${params.toString()}`);
+            const response = await axios.get(`${API_BASE_URL}/api/festivals?${params.toString()}`);
             const festivalsData = response.data.festivals || [];
             this.setState({ searchResults: festivalsData, searchLoading: false });
 

@@ -5,6 +5,7 @@ import "../login.css";
 import axios from "axios";
 import NavBar from "./NavBar";
 import { withTranslation } from 'react-i18next'; // HOC 추가
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 class Login extends Component {
     constructor(props) {
@@ -31,7 +32,7 @@ class Login extends Component {
         }
 
         axios
-            .post("http://localhost:5000/login", { username, password })
+            .post(`${API_BASE_URL}/login`, { username, password })
             .then((res) => {
                 if (res.data.result === "success") {
                     localStorage.setItem("token", res.data.token);

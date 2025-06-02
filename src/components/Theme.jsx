@@ -4,6 +4,7 @@ import "../theme.css";
 import '../festival.css';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next'; // 훅 사용
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 // 테마 데이터는 컴포넌트 외부 또는 설정 파일에서 관리하고, 여기서는 키만 참조하는 것이 좋습니다.
 // 번역을 위해 title과 desc는 키로 관리합니다.
@@ -123,7 +124,7 @@ const Theme = ({ toggleSearchOverlay }) => {
         const currentDisplayedThemeName = displayedThemeName || t(themesData.find(th => th.serverKey === themeServerKey)?.titleKey || '', themeServerKey);
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/festivals?theme=${encodeURIComponent(themeServerKey)}`);
+            const response = await axios.get(`${API_BASE_URL}/api/festivals?theme=${encodeURIComponent(themeServerKey)}`);
             setThemeFestivals(response.data.festivals || []);
             if (!response.data.festivals || response.data.festivals.length === 0) {
                 setFetchError(t('theme_select_error_no_festivals', { themeName: currentDisplayedThemeName }));

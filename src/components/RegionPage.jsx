@@ -5,6 +5,7 @@ import axios from 'axios';
 //import NavBar from './NavBar';
 import '../RegionPage.css';
 import '../festival.css';
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const RegionPage = () => {
     const { regionName: encodedRegionName } = useParams();
@@ -47,7 +48,7 @@ const RegionPage = () => {
             if (endDate) params.append('endDate', endDate);
             if (searchTerm.trim()) params.append('keyword', searchTerm.trim());
 
-            const response = await axios.get(`http://localhost:5000/api/festivals?${params.toString()}`);
+            const response = await axios.get(`${API_BASE_URL}/api/festivals?${params.toString()}`);
             setFestivals(response.data.festivals || []);
         } catch (err) {
             let errMsg = `'${regionName}' 지역의 축제를 불러오는 중 오류가 발생했습니다.`;

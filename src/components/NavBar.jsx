@@ -4,6 +4,7 @@ import { Link, useNavigate, NavLink } // NavLink가 active 스타일 처리에 �
     from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 // import './NavBar.css'; // 이 줄은 주석 처리 또는 삭제 (home.css 사용)
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const NavBar = ({ toggleSearchOverlay }) => {
     const { t, i18n } = useTranslation();

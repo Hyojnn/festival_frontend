@@ -5,6 +5,7 @@ import axios from "axios";
 import { Navigate, Link } from "react-router-dom";
 import { withTranslation } from 'react-i18next'; // 다국어 HOC
 import i18n from '../i18n'; // ✅ i18n 직접 import 추가 (오류 해결)
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 // 관심사 목록 (추후 다국어 키와 매핑 필요 시 확장 가능)
 const interestOptions = ["음악", "음식", "전통문화", "연극", "야시장", "전통", "야간", "콘서트", "한복"];
@@ -79,7 +80,7 @@ class Register extends Component {
             password: password,
             interests: interests
         };
-        return axios.post('http://localhost:5000/reg_ok', userData);
+        return axios.post(`${API_BASE_URL}/reg_ok`, userData);
     }
 
     handleSubmit = (e) => {

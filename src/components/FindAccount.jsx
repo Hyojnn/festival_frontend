@@ -5,6 +5,7 @@ import NavBar from './NavBar';
 import '../login.css'; // login.css 스타일 공유
 import { Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next'; // HOC 추가
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 class FindAccount extends Component {
     constructor(props) {
@@ -103,10 +104,14 @@ class FindAccount extends Component {
         if (nameErr || phoneErr) return;
 
         try {
-            const response = await axios.post('http://localhost:5000/api/find-id', {
-                name: nameForId.trim(),
-                phoneNumber: phoneNumberForId.trim(),
-            });
+            const response = await axios.post(
+                `${API_BASE_URL}/api/find-id`,
+                {
+                  name: nameForId.trim(),
+                  phoneNumber: phoneNumberForId.trim(),
+                }
+            );
+
             if (response.data && response.data.username) {
                 this.setState({ foundId: response.data.username, findIdMessage: t('find_id_found_message') });
             } else {
@@ -130,9 +135,12 @@ class FindAccount extends Component {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/find-pw', {
+            const response = await axios.post(
+                `${API_BASE_URL}/api/find-pw`, 
+                {
                 username: usernameForPw.trim(),
-            });
+                }
+            );
             if (response.data && response.data.message) {
                 this.setState({ findPwMessage: response.data.message }); // 서버 메시지를 그대로 사용하거나, t()로 번역
             } else if (response.data && response.data.password) { // 💥 보안 위험 부분

@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import '../festival.css'; // 축제 카드 스타일 재활용
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 // 각 테마 키에 따른 배경 이미지 URL 매핑 (예시)
 const themeBackgrounds = {
@@ -52,7 +53,7 @@ const BannerThemeFestivalsPage = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`http://localhost:5000/api/festivals?theme=${encodeURIComponent(themeKey)}`);
+            const response = await axios.get(`${API_BASE_URL}/api/festivals?theme=${encodeURIComponent(themeKey)}`);
             setFestivals(response.data.festivals || []);
         } catch (err) {
             console.error("BannerThemeFestivalsPage: Error fetching festivals by theme", err);

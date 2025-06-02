@@ -1,6 +1,7 @@
 // frontend/src/components/Festival.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import '../festival.css';
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 
 
@@ -85,7 +86,7 @@ const Festival = () => {
     if (keyword.trim()) params.append('keyword', keyword.trim());
     if (theme) params.append('theme', theme);
 
-    const url = `http://localhost:5000/api/festivals?${params.toString()}`;
+    const url = `${API_BASE_URL}/api/festivals?${params.toString()}`;
     console.log('Fetching URL:', url);
 
     const response = await fetch(url);
