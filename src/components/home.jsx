@@ -11,6 +11,7 @@ import {
     // 필요한 다른 아이콘이 있다면 여기에 추가 (예: FaPalette, FaUtensils, FaMusic)
 } from 'react-icons/fa';
 const API_BASE_URL = process.env.REACT_APP_API_URL;
+console.log("API_BASE_URL:", process.env.REACT_APP_API_URL);
 
 class Home extends Component {
     constructor(props) {
