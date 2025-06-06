@@ -1,0 +1,266 @@
+/* mypage.css */
+
+.mypage-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+}
+
+.mypage-title {
+    font-size: 2.5em;
+    color: #4CAF50; /* Vibrant green */
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+}
+
+.mypage-section {
+    background-color: #f9fcf9; /* Light green-ish background */
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    border: 1px solid #e0ffe0;
+}
+
+.section-title {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #c8e6c9;
+}
+
+    .section-title svg {
+        color: #4CAF50;
+        font-size: 1.1em;
+    }
+
+/* Info Item Style (basic info, verified info) */
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 1px dotted #eee;
+}
+
+    .info-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+.info-label {
+    font-weight: 600;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px; /* 라벨 너비 고정 */
+}
+
+    .info-label svg {
+        color: #66BB6A; /* Light green icon */
+    }
+
+.info-value {
+    color: #333;
+    flex-grow: 1;
+}
+
+/* Personal Info Verification */
+.personal-info-verification {
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f8ff; /* Light blue background */
+    border-radius: 8px;
+    border: 1px solid #cceeff;
+}
+
+    .personal-info-verification p {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+        color: #555;
+    }
+
+.verification-form .input-group {
+    margin-bottom: 20px;
+}
+
+.verification-form label {
+    display: block;
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.verification-form input[type="password"] {
+    width: calc(100% - 22px);
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: border-color 0.2s ease;
+}
+
+    .verification-form input[type="password"]:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
+
+.verify-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+    .verify-button:hover:not(:disabled) {
+        background-color: #45a049;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .verify-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+/* Edit Form for Personal Info */
+.edit-form .input-group {
+    margin-bottom: 15px;
+}
+
+.edit-form label {
+    display: block;
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.edit-form input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.edit-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.edit-form .save-button,
+.edit-form .cancel-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-form .save-button {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+    .edit-form .save-button:hover {
+        background-color: #1976D2;
+    }
+
+.edit-form .cancel-button {
+    background-color: #9E9E9E; /* Grey */
+    color: white;
+}
+
+    .edit-form .cancel-button:hover {
+        background-color: #757575;
+    }
+
+/* My Posts Section */
+.my-posts-section .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.my-posts-section .post-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 0.95em;
+}
+
+    .my-posts-section .post-item:last-child {
+        border-bottom: none;
+    }
+
+.my-posts-section .post-category {
+    background-color: #e0e0e0;
+    color: #555;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 500;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.my-posts-section .post-title {
+    flex-grow: 1;
+    color: #333;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+
+    .my-posts-section .post-title:hover {
+        text-decoration: underline;
+        color: #4CAF50;
+    }
+
+.my-posts-section .post-date {
+    color: #888;
+    font-size: 0.85em;
+    flex-shrink: 0;
+}
+
+.no-posts-message, .error-message {
+    text-align: center;
+    color: #666;
+    margin-top: 20px;
+    font-size: 1.1em;
+}
+
+.error-message {
+    color: #D32F2F; /* Red */
+    font-weight: 500;
+}

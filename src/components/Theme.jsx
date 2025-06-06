@@ -20,19 +20,18 @@ const themesRawData = [
 const Theme = ({ toggleSearchOverlay }) => {
     const { t } = useTranslation();
 
-    // 테마 데이터를 t 함수를 사용하여 동적으로 번역
     const themesData = useMemo(() => themesRawData.map(theme => ({
         ...theme,
-        title: t(theme.titleKey, theme.titleKey.replace('theme_', '').replace('_title', '')), // 기본값으로 키 일부 사용
+        title: t(theme.titleKey, theme.titleKey.replace('theme_', '').replace('_title', '')),
         desc: theme.descKey ? t(theme.descKey) : undefined
-    })), [t, themesRawData]); // t 함수나 raw 데이터 변경 시 재생성
+    })), [t]); // themesRawData 의존성 제거 (ESLint 경고에 따라)
 
     const [currentSlideIndex, setCurrentSlideIndex] = useState(themesData.length > 0 ? 1 : 0);
     const [isAnimating, setIsAnimating] = useState(false);
     const sliderRef = useRef(null);
 
     const [selectedServerThemeKey, setSelectedServerThemeKey] = useState('');
-    const [displayedThemeName, setDisplayedThemeName] = useState(''); // 사용자가 보는 테마 이름 (번역됨)
+    const [displayedThemeName, setDisplayedThemeName] = useState('');
     const [themeFestivals, setThemeFestivals] = useState([]);
     const [loadingFestivals, setLoadingFestivals] = useState(false);
     const [fetchError, setFetchError] = useState(null);
@@ -49,7 +48,7 @@ const Theme = ({ toggleSearchOverlay }) => {
         setCurrentSlideIndex(index);
         sliderRef.current.style.transition = animate ? "transform 0.5s ease" : "none";
         sliderRef.current.style.transform = `translateX(-${index * cardWidth}px)`;
-    }, [themesData, cardWidth]); // themesData 의존성 추가
+    }, [themesData, cardWidth]);
 
     const handleTransitionEnd = useCallback(() => {
         setIsAnimating(false);
@@ -120,7 +119,6 @@ const Theme = ({ toggleSearchOverlay }) => {
         setLoadingFestivals(true);
         setFetchError(null);
         setThemeFestivals([]);
-        // displayedThemeName은 클릭 시점에 설정된 번역된 이름을 사용
         const currentDisplayedThemeName = displayedThemeName || t(themesData.find(th => th.serverKey === themeServerKey)?.titleKey || '', themeServerKey);
 
         try {
@@ -142,7 +140,7 @@ const Theme = ({ toggleSearchOverlay }) => {
         } finally {
             setLoadingFestivals(false);
         }
-    }, [displayedThemeName, t, themesData]); // themesData 추가
+    }, [displayedThemeName, t, themesData]);
 
     useEffect(() => {
         if (selectedServerThemeKey) {
@@ -158,7 +156,7 @@ const Theme = ({ toggleSearchOverlay }) => {
         if (themeItem && themeItem.serverKey) {
             if (selectedServerThemeKey !== themeItem.serverKey) {
                 setSelectedServerThemeKey(themeItem.serverKey);
-                setDisplayedThemeName(themeItem.title); // 이미 번역된 title 사용
+                setDisplayedThemeName(themeItem.title);
             }
         } else {
             console.warn("Theme.jsx: Clicked theme item is invalid or has no serverKey.", themeItem);
@@ -167,7 +165,7 @@ const Theme = ({ toggleSearchOverlay }) => {
 
     return (
         <div className="theme-page">
-            
+
             <div className="theme-banner">
                 <p className="theme-banner-title">
                     {t('theme_banner_title_normal')} <br />
@@ -194,16 +192,16 @@ const Theme = ({ toggleSearchOverlay }) => {
                             {extendedThemes.map((themeItem, idx) => (
                                 <div
                                     className="theme-card"
-                                    key={`extended-${themeItem.titleKey}-${idx}`} // 고유 키 사용
+                                    key={`extended-${themeItem.serverKey || themeItem.titleKey}-${idx}`} // serverKey 우선 사용
                                     onClick={() => handleThemeCardClick(themeItem)}
                                     style={{ cursor: 'pointer' }}
                                     role="button"
                                     tabIndex={0}
                                     onKeyPress={(e) => e.key === 'Enter' && handleThemeCardClick(themeItem)}
                                 >
-                                    <div className="theme-image" style={{ backgroundImage: `url(${themeItem.image || '/images/default-theme.jpg'})` }} />
-                                    <div className="theme-label">{themeItem.title}</div> {/* 이미 번역된 title 사용 */}
-                                    {themeItem.desc && <div className="theme-desc">{themeItem.desc}</div>} {/* 이미 번역된 desc 사용 */}
+                                    <div className="theme-image" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${themeItem.image || '/images/default-theme.jpg'})` }} />
+                                    <div className="theme-label">{themeItem.title}</div>
+                                    {themeItem.desc && <div className="theme-desc">{themeItem.desc}</div>}
                                 </div>
                             ))}
                         </div>
@@ -227,17 +225,23 @@ const Theme = ({ toggleSearchOverlay }) => {
                                 <p style={{ textAlign: 'center', fontSize: '1.1em', marginTop: '20px' }}>{t('theme_select_error_no_festivals', { themeName: displayedThemeName })}</p>
                             )}
                             {!loadingFestivals && themeFestivals.length > 0 && (
-                                <div className="festival-list">
+                                <div className="festival-list"> {/* festival.css의 스타일 재활용 */}
                                     {themeFestivals.map((f, i) => (
-                                        <div className="festival-card" key={f['축제일련번호'] || `${f['축제명']}-${i}-theme`}>
-                                            <img src={f['대표이미지'] || `https://via.placeholder.com/220x150?text=${encodeURIComponent(t('placeholder_image_text', { name: f['축제명'] || '축제' }))}`} alt={f['축제명'] || t('festival_image_alt', '축제 이미지')} style={{ width: '100%', height: '180px', objectFit: 'cover', borderBottom: '1px solid #eee' }} />
+                                        <div className="festival-card" key={f.resource || `${f.name}-${i}-theme`}>
+                                            <img
+                                                src={f.images?.[0] || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                                                alt={f.name || t('festival_image_alt', '축제 이미지')}
+                                                className="festival-card-image" // 이 클래스에 높이/너비 등 스타일 지정 필요
+                                                onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder.png`; }}
+                                            />
                                             <div className="festival-info">
-                                                <h3>{f['축제명']}</h3>
-                                                {f['축제내용'] && <p className="description">{f['축제내용'].slice(0, 100)}{f['축제내용'].length > 100 ? '...' : ''}</p>}
+                                                <h3>{f.name}</h3>
+                                                {f.description && <p className="description">{f.description.slice(0, 100)}{f.description.length > 100 ? '...' : ''}</p>}
                                                 <ul>
-                                                    <li>{t('festivals_card_duration', { startDate: f['축제시작일자'], endDate: f['축제종료일자'] })}</li>
-                                                    <li>{t('festivals_card_location', { location: f['개최장소'] || t('no_location_info') })}</li>
-                                                    {f['홈페이지주소'] && <li><a href={f['홈페이지주소']} target="_blank" rel="noopener noreferrer">🔗 {t('festivals_card_homepage')}</a></li>}
+                                                    <li>{t('festivals_card_duration', { startDate: f.startDate, endDate: f.endDate })}</li>
+                                                    <li>{t('festivals_card_location', { location: f.address || t('no_location_info') })}</li>
+                                                    {/* 홈페이지 주소는 현재 API에서 제공되지 않음 */}
+                                                    {/* {f.homepage && <li><a href={f.homepage} target="_blank" rel="noopener noreferrer">🔗 {t('festivals_card_homepage')}</a></li>} */}
                                                 </ul>
                                             </div>
                                         </div>

@@ -17,6 +17,8 @@
     "react-kakao-maps-sdk": "^1.1.27",
     "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -42,5 +44,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-slick": "^0.23.13",
+    "nodemon": "^3.1.10"
   }
 }
