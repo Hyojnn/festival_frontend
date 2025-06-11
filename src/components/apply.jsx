@@ -33,6 +33,7 @@ const SupportForm = ({ userId }) => {
 
     try {
       // 1) 지원 정보 저장
+      console.log('지원 정보 저장 요청');
       await axios.post(`${API_BASE_URL}/api/support-info`, {
         userId,
         region,
@@ -44,6 +45,7 @@ const SupportForm = ({ userId }) => {
       });
 
       // 2) 추천 결과 요청
+      console.log('추천 요청');
       const res = await axios.post(`${API_BASE_URL}/api/support-info`, { userId });
       
       setRecommendations(res.data.recommendations || []);
@@ -51,7 +53,7 @@ const SupportForm = ({ userId }) => {
       
       console.log('추천 결과 응답:', res.data);
     } catch (err) {
-      console.error('지원 정보 저장 또는 추천 조회 중 오류:', err);
+      console.error('❌ axios 요청 실패:', err.response?.data || err.message);
       setError('오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setLoading(false);
