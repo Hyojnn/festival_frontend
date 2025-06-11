@@ -34,6 +34,8 @@ const SupportForm = ({ userId }) => {
     try {
       // 1) 지원 정보 저장
       console.log('지원 정보 저장 요청');
+      console.log('🔍 최종 요청 주소:', `${API_BASE_URL}/api/support-info`);
+
       await axios.post(`${API_BASE_URL}/api/support-info`, {
         userId,
         region,
