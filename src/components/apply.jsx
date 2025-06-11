@@ -46,7 +46,7 @@ const SupportForm = ({ userId }) => {
 
       // 2) 추천 결과 요청
       console.log('추천 요청');
-      const res = await axios.get(`${API_BASE_URL}/api/support-info`, { userId });
+      const res = await axios.post(`${API_BASE_URL}/api/support-info`, { userId });
       
       setRecommendations(res.data.recommendations || []);
       setSubmitted(true); // 제출 완료 처리
