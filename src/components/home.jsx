@@ -1,17 +1,78 @@
 // frontend/src/components/home.jsx
-import React, { Component } from "react";
+
+import React, { Component, createRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import "../home.css"; // 이 CSS 파일을 아래 제공되는 전체 코드로 교체해주세요.
+import "../home.css";
 import { withTranslation } from 'react-i18next';
+//import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 import {
-    FaChevronLeft, FaChevronRight, FaTicketAlt, FaMapMarkedAlt, FaBullhorn,
+    FaChevronLeft, FaChevronRight, FaTicketAlt, FaMapMarkedAlt,
     FaUsers, FaLightbulb, FaRegCalendarAlt, FaHandsHelping, FaInfoCircle,
-    FaRegStar, FaPhotoVideo, FaComments, FaSearchLocation, FaPlaneDeparture
-    // 필요한 다른 아이콘이 있다면 여기에 추가 (예: FaPalette, FaUtensils, FaMusic)
+    FaRegStar, FaComments, FaSearchLocation, FaPlaneDeparture
 } from 'react-icons/fa';
-const API_BASE_URL = process.env.REACT_APP_API_URL;
-console.log("API_BASE_URL:", API_BASE_URL);
+
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+
+// 날짜 문자열(YYYYMMDD)을 Date 객체로 변환하는 헬퍼 함수
+const parseApiDate = (dateStr) => {
+    if (!dateStr || typeof dateStr !== 'string' || dateStr.length !== 8) return null;
+    const year = parseInt(dateStr.substring(0, 4), 10);
+    const month = parseInt(dateStr.substring(4, 6), 10) - 1; // JS month is 0-indexed
+    const day = parseInt(dateStr.substring(6, 8), 10);
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
+    return new Date(year, month, day);
+};
+
+// 날짜를 "YYYY.MM.DD" 형식으로 포맷하는 헬퍼 함수
+const formatDateToDots = (dateStr) => {
+    if (!dateStr || typeof dateStr !== 'string' || dateStr.length !== 8) return "";
+    return `${dateStr.substring(0, 4)}.${dateStr.substring(4, 6)}.${dateStr.substring(6, 8)}`;
+};
+
+// --- 정적 데이터 (홈 화면에 필요한 데이터는 여기서 정의) ---
+const mainSliderData = [
+    { image: "/images/slide1.jpg", title_key: "home_slide1_winter_title", desc_key: "home_slide1_winter_desc", buttonText_key: "slide_button_text", themeServerKey: "winter_snow" },
+    { image: "/images/slide2.jpg", title_key: "home_slide2_summer_title", desc_key: "home_slide2_summer_desc", buttonText_key: "slide_button_text", themeServerKey: "summer_music" },
+    { image: "/images/slide3.jpg", title_key: "home_slide3_tradition_title", desc_key: "home_slide3_tradition_desc", buttonText_key: "slide_button_text", themeServerKey: "traditional_culture" },
+    { image: "/images/slide4.jpg", title_key: "home_slide4_food_title", desc_key: "home_slide4_food_desc", buttonText_key: "slide_button_text", themeServerKey: "food_festival" },
+];
+
+const curationTabsData = [
+    { id: 'curation1', titleKey: 'home_curation_ai_title', descriptionKey: 'home_curation_ai_desc', icon: <FaLightbulb size={30} />, link: '/festivals?filter=ai_recommended', ctaKey: 'home_curation_cta_ai' },
+    { id: 'curation2', titleKey: 'home_curation_hotspot_title', descriptionKey: 'home_curation_hotspot_desc', icon: <FaMapMarkedAlt size={30} />, link: '/regions', ctaKey: 'home_curation_cta_region' },
+    { id: 'curation3', titleKey: 'home_curation_planner_title', descriptionKey: 'home_curation_planner_desc', icon: <FaRegCalendarAlt size={30} />, link: '/themes', ctaKey: 'home_curation_cta_theme' }
+];
+
+const serviceBannersData = [
+    { id: 'sb1', titleKey: 'home_service_banner_1_title', descriptionKey: 'home_service_banner_1_desc', image: '/images/service_banner_1.jpg', link: '/info/safety_guide' },
+    { id: 'sb2', titleKey: 'home_service_banner_2_title', descriptionKey: 'home_service_banner_2_desc', image: '/images/service_banner_2.jpg', link: '/info/travel_tips' }
+];
+
+const allAvailableRegions = [
+    { name: "서울특별시", description: "다채로운 매력의 도시", image: `${process.env.PUBLIC_URL}/images/regions/seoul.png` },
+    { name: "부산광역시", description: "열정적인 축제의 바다", image: `${process.env.PUBLIC_URL}/images/regions/busan.png` },
+    { name: "대구광역시", description: "근대골목과 더위의 도시", image: `${process.env.PUBLIC_URL}/images/regions/daegu.png` },
+    { name: "인천광역시", description: "과거와 현재가 공존하는 항구도시", image: `${process.env.PUBLIC_URL}/images/regions/incheon.png` },
+    { name: "광주광역시", description: "예술과 민주화의 도시", image: `${process.env.PUBLIC_URL}/images/regions/gwangju.png` },
+    { name: "대전광역시", description: "과학과 교통의 중심지", image: `${process.env.PUBLIC_URL}/images/regions/daejeon.png` },
+    { name: "울산광역시", description: "산업과 자연의 조화", image: `${process.env.PUBLIC_URL}/images/regions/ulsan.png` },
+    { name: "세종특별자치시", description: "행정 중심 복합도시", image: `${process.env.PUBLIC_URL}/images/regions/sejong.png` },
+    { name: "경기도", description: "역사와 미래가 함께하는 곳", image: `${process.env.PUBLIC_URL}/images/regions/gyeonggi.png` },
+    { name: "강원특별자치도", description: "설렘 가득한 산과 바다", image: `${process.env.PUBLIC_URL}/images/regions/gangwon.png` },
+    { name: "충청북도", description: "중원의 문화유산과 자연", image: `${process.env.PUBLIC_URL}/images/regions/chungbuk.png` },
+    { name: "충청남도", description: "백제의 숨결이 살아있는", image: `${process.env.PUBLIC_URL}/images/regions/chungnam.png` },
+    { name: "전북특별자치도", description: "전통과 맛의 중심", image: `${process.env.PUBLIC_URL}/images/regions/jeonbuk.png` },
+    { name: "전라남도", description: "맛과 멋의 고장", image: `${process.env.PUBLIC_URL}/images/regions/jeonnam.png` },
+    { name: "경상북도", description: "유구한 역사와 문화", image: `${process.env.PUBLIC_URL}/images/regions/gyeongbuk.png` },
+    { name: "경상남도", description: "역동적인 산업과 아름다운 자연", image: `${process.env.PUBLIC_URL}/images/regions/gyeongnam.png` },
+    { name: "제주특별자치도", description: "자연의 아름다움과 신비", image: `${process.env.PUBLIC_URL}/images/regions/jeju.png` },
+];
 
 class Home extends Component {
     constructor(props) {
@@ -19,71 +80,66 @@ class Home extends Component {
         this.state = {
             isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
             userName: localStorage.getItem("isLoggedIn") === "true" ? (localStorage.getItem("userName") || "") : "",
+            userRegion: localStorage.getItem("isLoggedIn") === "true" ? (localStorage.getItem("userRegion") || "") : "",
             recommendations: [],
             loadingRecs: false,
             recError: null,
             currentSlide: 0,
-            upcomingFestivals: [
-                { id: 'uf1', nameKey: 'upcoming_festival_1_name', date: '2025.06.10 - 06.15', image: '/images/upcoming/upcoming1.jpg', link: '/festivals/detail/uf1', themeKey: 'summer_music', locationKey: 'upcoming_festival_1_location' },
-                { id: 'uf2', nameKey: 'upcoming_festival_2_name', date: '2025.07.01 - 07.07', image: '/images/upcoming/upcoming2.jpg', link: '/festivals/detail/uf2', themeKey: 'food_festival', locationKey: 'upcoming_festival_2_location' },
-                { id: 'uf3', nameKey: 'upcoming_festival_3_name', date: '2025.08.15 - 08.20', image: '/images/upcoming/upcoming3.jpg', link: '/festivals/detail/uf3', themeKey: 'traditional_culture', locationKey: 'upcoming_festival_3_location' },
-                { id: 'uf4', nameKey: 'upcoming_festival_4_name', date: '2025.09.20 - 09.25', image: '/images/upcoming/upcoming4.jpg', link: '/festivals/detail/uf4', themeKey: 'art_culture', locationKey: 'upcoming_festival_4_location' }
-            ],
-            curationTabs: [
-                { id: 'curation1', titleKey: 'home_curation_ai_title', descriptionKey: 'home_curation_ai_desc', icon: <FaLightbulb size={30} />, link: '/festivals?filter=ai_recommended', ctaKey: 'home_curation_cta_ai' },
-                { id: 'curation2', titleKey: 'home_curation_hotspot_title', descriptionKey: 'home_curation_hotspot_desc', icon: <FaMapMarkedAlt size={30} />, link: '/regions', ctaKey: 'home_curation_cta_region' },
-                { id: 'curation3', titleKey: 'home_curation_planner_title', descriptionKey: 'home_curation_planner_desc', icon: <FaRegCalendarAlt size={30} />, link: '/themes', ctaKey: 'home_curation_cta_theme' }
-            ],
-            serviceBanners: [
-                { id: 'sb1', titleKey: 'home_service_banner_1_title', descriptionKey: 'home_service_banner_1_desc', image: '/images/service_banner_1.jpg', link: '/info/travel_tips' },
-                { id: 'sb2', titleKey: 'home_service_banner_2_title', descriptionKey: 'home_service_banner_2_desc', image: '/images/service_banner_2.jpg', link: '/info/safety_guide' }
-            ],
-            communityHighlights: [
-                { id: 'ch1', titleKey: 'community_highlight_1_title', author: '여행가다람쥐', link: '/community/post/ch1', typeKey: 'community_type_review', image: '/images/community/comm1.jpg', likes: 120 },
-                { id: 'ch2', titleKey: 'community_highlight_2_title', author: '축제도장깨기', link: '/community/post/ch2', typeKey: 'community_type_tip', image: '/images/community/comm2.jpg', likes: 98 },
-                { id: 'ch3', titleKey: 'community_highlight_3_title', author: '미식탐험가', link: '/community/post/ch3', typeKey: 'community_type_photo', image: '/images/community/comm3.jpg', likes: 250 },
-                { id: 'ch4', titleKey: 'community_highlight_4_title', author: '나홀로여행족', link: '/community/post/ch4', typeKey: 'community_type_review', image: '/images/community/comm4.jpg', likes: 77 }
-            ],
-            featuredRegions: [
-                { id: 'fr1', nameKey: 'featured_region_1_name', image: '/images/regions_featured/region1.jpg', link: '/region/부산광역시', descriptionKey: 'featured_region_1_desc' },
-                { id: 'fr2', nameKey: 'featured_region_2_name', image: '/images/regions_featured/region2.jpg', link: '/region/제주특별자치도', descriptionKey: 'featured_region_2_desc' },
-                { id: 'fr3', nameKey: 'featured_region_3_name', image: '/images/regions_featured/region3.jpg', link: '/region/서울특별시', descriptionKey: 'featured_region_3_desc' },
-                { id: 'fr4', nameKey: 'featured_region_4_name', image: '/images/regions_featured/region4.jpg', link: '/region/경기도', descriptionKey: 'featured_region_4_desc' }
-            ],
-            travelTips: [
-                { id: 'tip1', titleKey: 'travel_tip_1_title', summaryKey: 'travel_tip_1_summary', icon: <FaInfoCircle size={24} />, link: '/tips/tip1' },
-                { id: 'tip2', titleKey: 'travel_tip_2_title', summaryKey: 'travel_tip_2_summary', icon: <FaPlaneDeparture size={24} />, link: '/tips/tip2' },
-                { id: 'tip3', titleKey: 'travel_tip_3_title', summaryKey: 'travel_tip_3_summary', icon: <FaPhotoVideo size={24} />, link: '/tips/tip3' }
-            ]
+
+            upcomingFestivals: [],
+            loadingUpcoming: true,
+            upcomingError: null,
+            popularPosts: [],
+
+            communityHighlights: [],
+            loadingHighlights: true,
+            highlightsError: null,
+
+            hottestTips: [],
+            loadingTips: true,
+            tipsError: null,
+
+            displayedRegions: [],
+            loadingRegions: false,
+            regionsError: null,
         };
 
-        this.slides = [
-            { image: "/images/slide1.jpg", title_key: "home_slide1_winter_title", desc_key: "home_slide1_winter_desc", buttonText_key: "slide_button_text", themeServerKey: "winter_snow" },
-            { image: "/images/slide2.jpg", title_key: "home_slide2_summer_title", desc_key: "home_slide2_summer_desc", buttonText_key: "slide_button_text", themeServerKey: "summer_music" },
-            { image: "/images/slide3.jpg", title_key: "home_slide3_tradition_title", desc_key: "home_slide3_tradition_desc", buttonText_key: "slide_button_text", themeServerKey: "traditional_culture" },
-            { image: "/images/slide4.jpg", title_key: "home_slide4_food_title", desc_key: "home_slide4_food_desc", buttonText_key: "slide_button_text", themeServerKey: "food_festival" },
-        ];
+        this.slides = mainSliderData;
         this.slideInterval = null;
         this.nextSlide = this.nextSlide.bind(this);
         this.prevSlide = this.prevSlide.bind(this);
         this.goToSlide = this.goToSlide.bind(this);
+        this.upcomingFestivalsRef = createRef();
     }
 
-    // --- 생명주기 메서드 및 기존 로직들 ---
     loadLoginStatusAndRecommendations = () => {
         const savedLogin = localStorage.getItem("isLoggedIn") === "true";
         const savedUserName = savedLogin ? (localStorage.getItem("userName") || "") : "";
-        this.setState({ isLoggedIn: savedLogin, userName: savedUserName }, () => {
+        const savedUserRegion = savedLogin ? (localStorage.getItem("userRegion") || "") : "";
+
+        this.setState({
+            isLoggedIn: savedLogin,
+            userName: savedUserName,
+            userRegion: savedUserRegion
+        }, () => {
+            this.fetchPopularPosts();
+
             if (this.state.isLoggedIn && this.state.userName) {
                 this.fetchRecommendations();
+                this.fetchRecommendedRegionsForUser();
             } else {
                 this.setState({ recommendations: [], recError: null, loadingRecs: false });
+                this.loadOrSetAnonymousRegions();
             }
         });
     }
 
     componentDidMount() {
         this.loadLoginStatusAndRecommendations();
+        this.fetchAndSetUpcomingFestivals();
+        this.fetchCommunityHighlights(); // <-- 이 줄을 추가해주세요!
+        this.fetchHottestTips();
+
         if (this.slides.length > 1) {
             this.slideInterval = setInterval(this.nextSlide, 7000);
         }
@@ -95,11 +151,54 @@ class Home extends Component {
         window.removeEventListener('storage', this.handleStorageChangeForHome);
     }
 
+    // ▼▼▼▼▼ [수정] 커뮤니티 하이라이트 데이터를 가져오는 함수 추가 ▼▼▼▼▼
+    fetchCommunityHighlights = async () => {
+        this.setState({ loadingHighlights: true, highlightsError: null });
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/posts/home_highlights`);
+            this.setState({ communityHighlights: response.data.highlights || [], loadingHighlights: false });
+        } catch (error) {
+            console.error("커뮤니티 하이라이트 로딩 실패:", error);
+            this.setState({
+                highlightsError: "생생한 축제 이야기를 불러오는 데 실패했습니다.",
+                loadingHighlights: false
+            });
+        }
+    }
+    // ▲▲▲
+
+    // ▼▼▼▼▼ [수정] 인기 꿀팁 데이터를 가져오는 함수 추가 ▼▼▼▼▼
+    fetchHottestTips = async () => {
+        this.setState({ loadingTips: true, tipsError: null });
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/posts/hottest_tips`);
+            this.setState({ hottestTips: response.data.hottestTips || [], loadingTips: false });
+        } catch (error) {
+            console.error("인기 꿀팁 로딩 실패:", error);
+            this.setState({
+                tipsError: "여행 꿀팁을 불러오는 데 실패했습니다.",
+                loadingTips: false
+            });
+        }
+    }
+    // ▲▲▲▲▲ [수정] 여기까지 ▲▲▲▲▲
+
     handleStorageChangeForHome = (event) => {
-        if (event.key === 'isLoggedIn' || event.key === 'userName') {
+        if (event.key === 'isLoggedIn' || event.key === 'userName' || event.key === 'userRegion') {
             this.loadLoginStatusAndRecommendations();
         }
     };
+
+    fetchPopularPosts = async () => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/posts/popular?limit=4`);
+            this.setState({ popularPosts: response.data.popularPosts || [] });
+        } catch (error) {
+            console.error("인기 게시글 불러오기 실패:", error);
+            this.setState({ popularPosts: [] });
+        }
+    };
+
 
     fetchRecommendations = () => {
         const { userName } = this.state;
@@ -122,6 +221,141 @@ class Home extends Component {
                     recommendations: [],
                 });
             });
+    };
+
+    fetchRecommendedRegionsForUser = async () => {
+        const { t } = this.props;
+        this.setState({ loadingRegions: true, regionsError: null });
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.warn("추천 지역 API 호출: 토큰 없음. 로그인 필요.");
+                this.setState({ loadingRegions: false });
+                this.loadOrSetAnonymousRegions();
+                return;
+            }
+
+            const response = await axios.get(`${API_BASE_URL}/api/recommend/regions`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data.recommendedRegions && response.data.recommendedRegions.length > 0) {
+                const finalRegions = response.data.recommendedRegions.map(recRegion => {
+                    const fullRegionInfo = allAvailableRegions.find(ar => ar.name === recRegion.name);
+                    return {
+                        name: recRegion.name,
+                        description: fullRegionInfo ? fullRegionInfo.description : t('no_region_description'),
+                        image: fullRegionInfo ? fullRegionInfo.image : `${process.env.PUBLIC_URL}/images/placeholder.png`,
+                    };
+                });
+                this.setState({ displayedRegions: finalRegions });
+            } else {
+                this.setState({ regionsError: t('no_recommended_regions'), displayedRegions: [] });
+                this.loadOrSetAnonymousRegions();
+            }
+        } catch (error) {
+            console.error("관심사 기반 추천 지역 불러오기 실패:", error.response?.data?.error || error.message);
+            this.setState({
+                regionsError: t('error_fetching_regions'),
+                displayedRegions: []
+            });
+            this.loadOrSetAnonymousRegions();
+        } finally {
+            this.setState({ loadingRegions: false });
+        }
+    };
+
+    loadOrSetAnonymousRegions = () => {
+        const { t } = this.props;
+        this.setState({ loadingRegions: true, regionsError: null });
+        try {
+            const sessionKey = 'anonymousRecommendedRegions';
+            let storedRegions = sessionStorage.getItem(sessionKey);
+
+            if (storedRegions) {
+                const parsedRegions = JSON.parse(storedRegions);
+                if (parsedRegions.length > 0) {
+                    this.setState({ displayedRegions: parsedRegions });
+                    this.setState({ loadingRegions: false });
+                    return;
+                }
+            }
+
+            const shuffled = [...allAvailableRegions].sort(() => 0.5 - Math.random());
+            const newRandomRegions = shuffled.slice(0, 4).map(region => ({
+                name: region.name,
+                description: region.description,
+                image: `${process.env.PUBLIC_URL}/images/placeholder.png`
+            }));
+
+            sessionStorage.setItem(sessionKey, JSON.stringify(newRandomRegions));
+            this.setState({ displayedRegions: newRandomRegions, loadingRegions: false });
+
+        } catch (e) {
+            console.error("비로그인 지역 추천 로드/설정 중 오류:", e);
+            this.setState({ regionsError: t('error_fetching_regions'), loadingRegions: false });
+        }
+    };
+
+
+    fetchAndSetUpcomingFestivals = () => {
+        const { t } = this.props;
+        this.setState({ loadingUpcoming: true, upcomingError: null });
+
+        axios.get(`${API_BASE_URL}/api/festivals`)
+            .then(res => {
+                const festivalsFromApi = res.data.festivals || [];
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0);
+
+                const processedFestivals = festivalsFromApi
+                    .map(f => ({
+                        ...f,
+                        parsedStartDate: parseApiDate(f.startDate)
+                    }))
+                    .filter(f => f.parsedStartDate && f.parsedStartDate >= currentDate)
+                    .sort((a, b) => a.parsedStartDate - b.parsedStartDate)
+                    .slice(0, 10)
+                    .map(f => {
+                        const startDateDisplay = formatDateToDots(f.startDate);
+                        const endDateDisplay = formatDateToDots(f.endDate);
+                        const dateOutput = endDateDisplay && endDateDisplay !== startDateDisplay ? `${startDateDisplay} - ${endDateDisplay}` : startDateDisplay;
+
+                        return {
+                            id: f.resource,
+                            name: f.name,
+                            date: dateOutput,
+                            image: f.images?.[0],
+                            locationText: f.address ? f.address.split(' ')[0] : t('location_various'),
+                        };
+                    });
+
+                this.setState({
+                    upcomingFestivals: processedFestivals,
+                    loadingUpcoming: false,
+                    upcomingError: processedFestivals.length === 0 ? t('home_no_upcoming_festivals_data') : null
+                });
+            })
+            .catch(err => {
+                console.error("다가오는 축제 정보 로드 실패:", err);
+                this.setState({
+                    loadingUpcoming: false,
+                    upcomingFestivals: [],
+                    upcomingError: t('error_fetching_data')
+                });
+            });
+    }
+
+    handleUpcomingScroll = (direction) => {
+        const container = this.upcomingFestivalsRef.current;
+        if (container) {
+            const scrollAmount = 355;
+            if (direction === 'prev') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
     };
 
     handleJobInfoClick = () => {
@@ -148,22 +382,25 @@ class Home extends Component {
     goToSlide = (index) => {
         this.setState({ currentSlide: index });
     };
-    // --- 여기까지 ---
 
     render() {
         const { t } = this.props;
         const {
             isLoggedIn, recommendations, loadingRecs, recError, currentSlide,
-            curationTabs, upcomingFestivals, serviceBanners, communityHighlights,
-            featuredRegions, travelTips,
-            userName
+            upcomingFestivals, loadingUpcoming, upcomingError,
+            userName, userRegion,
+            displayedRegions, loadingRegions, regionsError,
+            communityHighlights, loadingHighlights, highlightsError,
+            hottestTips, loadingTips, tipsError
         } = this.state;
+
+        console.log("현재 userRegion:", userRegion);
+        console.log("sb2 배너 링크:", isLoggedIn && userRegion ? `/region/${userRegion}` : '/info/safety_guide');
 
         const currentSlideData = this.slides.length > 0 ? this.slides[currentSlide] : null;
 
         return (
             <div className="home-page-container vibrant-theme">
-                {/* 1. 상단 히어로 슬라이드 */}
                 {currentSlideData && (
                     <section
                         className="hero-slider-section vibrant-hero"
@@ -201,11 +438,10 @@ class Home extends Component {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120"><path fill="#f9f9f9" fillOpacity="1" d="M0,96L120,80C240,64,480,32,720,32C960,32,1200,64,1320,80L1440,96L1440,0L1320,0C1200,0,960,0,720,0C480,0,240,0,120,0L0,0Z"></path></svg>
                 </div>
 
-                {/* 2. 큐레이션 섹션 */}
                 <section className="home-section curation-section">
                     <h2 className="home-section-title">{t('home_curation_section_title')}</h2>
                     <div className="curation-grid">
-                        {curationTabs.map(tab => (
+                        {curationTabsData.map(tab => (
                             <Link to={tab.link} key={tab.id} className="curation-card">
                                 <div className="curation-card-icon">{tab.icon}</div>
                                 <h3 className="curation-card-title">{t(tab.titleKey)}</h3>
@@ -216,92 +452,140 @@ class Home extends Component {
                     </div>
                 </section>
 
-                {/* 3. 주요/다가오는 축제 알림 */}
-                {upcomingFestivals.length > 0 && (
-                    <section className="home-section upcoming-festivals-highlight-section">
-                        <h2 className="home-section-title"><FaRegCalendarAlt /> {t('home_upcoming_festivals_title')}</h2>
-                        <div className="upcoming-festivals-grid">
-                            {upcomingFestivals.map(festival => (
-                                <Link to={festival.link} key={festival.id} className="upcoming-festival-card">
-                                    <div className="upcoming-card-image-wrapper">
-                                        <img src={`${process.env.PUBLIC_URL}${festival.image}`} alt={t(festival.nameKey)} className="upcoming-card-image" />
-                                        <span className="upcoming-card-theme-badge">{t(`theme_badge_${festival.themeKey}`)}</span>
-                                    </div>
-                                    <div className="upcoming-card-content">
-                                        <h3 className="upcoming-card-name">{t(festival.nameKey)}</h3>
-                                        <p className="upcoming-card-location"><FaMapMarkedAlt size={12} /> {t(festival.locationKey, "전국")}</p>
-                                        <p className="upcoming-card-date">{festival.date}</p>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                        <div className="section-more-button-container">
-                            <Link to="/festivals?filter=upcoming" className="section-more-button">{t('view_all_upcoming_festivals')}</Link>
-                        </div>
-                    </section>
-                )}
-
-                {/* 4. "이 지역 어때요?" 섹션 */}
-                <section className="home-section featured-regions-section">
-                    <h2 className="home-section-title"><FaSearchLocation /> {t('home_featured_regions_title')}</h2>
-                    <div className="featured-regions-grid">
-                        {featuredRegions.map(region => (
-                            <Link to={region.link} key={region.id} className="featured-region-card">
-                                <img src={`${process.env.PUBLIC_URL}${region.image}`} alt={t(region.nameKey)} className="featured-region-image" />
-                                <div className="featured-region-overlay">
-                                    <h3 className="featured-region-name">{t(region.nameKey)}</h3>
-                                    <p className="featured-region-desc">{t(region.descriptionKey)}</p>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
-
-                {/* 5. 로그인 사용자 맞춤 추천 축제 */}
-                {isLoggedIn && recommendations.length > 0 && (
-                    <section className="home-section recommended-festivals-section user-recommendations">
-                        <h2 className="home-section-title"><FaRegStar /> {t('home_user_recommend_title', { userName: userName })}</h2>
-                        {loadingRecs ? <p className="loading-message">{t('loading_results')}</p> : recError ? <p className="error-message">{recError}</p> : (
-                            <div className="home-card-list four-cards">
-                                {recommendations.slice(0, 8).map((festival, idx) => ( // 최대 8개 추천
-                                    <div className="home-festival-card" key={festival['축제일련번호'] || `${festival['축제명']}-${idx}-rec`}>
-                                        <Link to={`/festivals`}> {/* 실제 상세 페이지 링크로 수정 필요 */}
-                                            <div className="home-card-image-wrapper">
-                                                <img
-                                                    src={festival['대표이미지'] || `${process.env.PUBLIC_URL}/images/placeholder_festival.png`}
-                                                    alt={festival['축제명']}
-                                                    className="home-card-image"
-                                                    onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder_festival.png`; }}
-                                                />
-                                            </div>
-                                        </Link>
-                                        <div className="home-card-body">
-                                            <h3 className="home-card-title">
-                                                <Link to={`/festivals`}>{festival['축제명']}</Link>
-                                            </h3>
-                                            {festival['개최장소'] && (
-                                                <p className="home-card-location">
-                                                    <FaMapMarkedAlt size={12} style={{ marginRight: '5px', opacity: 0.7 }} />
-                                                    {festival['개최장소']}
-                                                </p>
-                                            )}
-                                            <p className="home-card-date">
-                                                <FaRegCalendarAlt size={12} style={{ marginRight: '5px', opacity: 0.7 }} />
-                                                {t('festivals_card_duration_simple', {
-                                                    startDate: festival['축제시작일자'],
-                                                    endDate: festival['축제종료일자']
-                                                })}
-                                            </p>
+                <section className="home-section upcoming-festivals-highlight-section">
+                    <h2 className="home-section-title"><FaRegCalendarAlt /> {t('home_upcoming_festivals_title')}</h2>
+                    {loadingUpcoming ? (
+                        <p className="loading-message">{t('festivals_loading')}</p>
+                    ) : upcomingError ? (
+                        <p className="error-message">{upcomingError}</p>
+                    ) : upcomingFestivals.length > 0 ? (
+                        <div className="upcoming-slider-container">
+                            {upcomingFestivals.length > 3 && (
+                                <button
+                                    onClick={() => this.handleUpcomingScroll('prev')}
+                                    className="upcoming-slide-control prev"
+                                    aria-label={t('previous_slide_upcoming')}
+                                >
+                                    <FaChevronLeft />
+                                </button>
+                            )}
+                            <div className="upcoming-festivals-grid" ref={this.upcomingFestivalsRef}>
+                                {upcomingFestivals.map(festival => (
+                                    <div key={festival.id} className="upcoming-festival-card">
+                                        <div className="upcoming-card-image-wrapper">
+                                            <img
+                                                src={festival.image || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                                                alt={festival.name}
+                                                className="upcoming-card-image"
+                                                onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder.png`; }}
+                                            />
+                                        </div>
+                                        <div className="upcoming-card-content">
+                                            <h3 className="upcoming-card-name">{festival.name}</h3>
+                                            {festival.locationText && <p className="upcoming-card-location"><FaMapMarkedAlt size={12} /> {festival.locationText}</p>}
+                                            <p className="upcoming-card-date">{festival.date}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                        )}
-                        {recommendations.length > 4 && (
-                            <div className="section-more-button-container">
-                                <Link to="/festivals?filter=recommended" className="section-more-button">{t('view_more_recommendations')}</Link>
-                            </div>
-                        )}
+                            {upcomingFestivals.length > 3 && (
+                                <button
+                                    onClick={() => this.handleUpcomingScroll('next')}
+                                    className="upcoming-slide-control next"
+                                    aria-label={t('next_slide_upcoming')}
+                                >
+                                    <FaChevronRight />
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <p className="info-message">{t('home_no_upcoming_festivals_data')}</p>
+                    )}
+                    {!loadingUpcoming && !upcomingError && (
+                        <div className="section-more-button-container">
+                            <Link to="/festivals" className="section-more-button">{t('view_all_festivals_short')}</Link>
+                        </div>
+                    )}
+                </section>
+
+                <section className="home-section featured-regions-section">
+                    <h2 className="home-section-title"><FaSearchLocation /> {t('home_featured_regions_title')}</h2>
+                    {loadingRegions ? (
+                        <p className="loading-message">{t('loading_regions')}</p>
+                    ) : regionsError ? (
+                        <p className="error-message">{regionsError}</p>
+                    ) : (
+                        <div className="featured-regions-grid">
+                            {displayedRegions.length > 0 ? (
+                                displayedRegions.map((region, index) => (
+                                    <Link to={`/region/${encodeURIComponent(region.name)}`} key={region.name} className="featured-region-card">
+                                        <img src={region.image || `${process.env.PUBLIC_URL}/images/placeholder.png`} alt={t(`region_name_${region.name.replace(/ /g, '_').toLowerCase()}`, region.name)} className="featured-region-image" />
+                                        <div className="featured-region-overlay">
+                                            <h3 className="featured-region-name">{t(`region_name_${region.name.replace(/ /g, '_').toLowerCase()}`, region.name)}</h3>
+                                            <p className="featured-region-desc">{t(`region_desc_${region.name.replace(/ /g, '_').toLowerCase()}`, region.description)}</p>
+                                        </div>
+                                    </Link>
+                                ))
+                            ) : (
+                                <p className="info-message">{t('no_regions_to_display', '표시할 추천 지역이 없습니다.')}</p>
+                            )}
+                        </div>
+                    )}
+                </section>
+
+                {isLoggedIn && (
+                    <section className="home-section recommended-festivals-section user-recommendations">
+                        <h2 className="home-section-title"><FaRegStar /> {t('home_user_recommend_title', { userName: userName })}</h2>
+                        {loadingRecs ? <p className="loading-message">{t('loading_results')}</p>
+                            : recError ? <p className="error-message">{recError}</p>
+                                : recommendations.length > 0 ? (
+                                    <>
+                                        <div className="home-card-list four-cards">
+                                            {recommendations.slice(0, 8).map((festival, idx) => (
+                                                <div className="home-festival-card" key={festival['축제일련번호'] || `${festival['축제명']}-${idx}-rec`}>
+                                                    <Link to={`/festivals/detail/${festival['축제일련번호'] || festival['축제명']}`}>
+                                                        <div className="home-card-image-wrapper">
+                                                            <img
+                                                                src={festival['대표이미지'] || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                                                                alt={festival['축제명']}
+                                                                className="home-card-image"
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder.png`; }}
+                                                            />
+                                                        </div>
+                                                    </Link>
+                                                    <div className="home-card-body">
+                                                        <h3 className="home-card-title">
+                                                            <Link to={`/festivals/detail/${festival['축제일련번호'] || festival['축제명']}`}>{festival['축제명']}</Link>
+                                                        </h3>
+                                                        {festival['개최장소'] && (
+                                                            <p className="home-card-location">
+                                                                <FaMapMarkedAlt size={12} style={{ marginRight: '5px', opacity: 0.7 }} />
+                                                                {festival['개최장소']}
+                                                            </p>
+                                                        )}
+                                                        {(festival['축제시작일자'] || festival['축제종료일자']) && (
+                                                            <p className="home-card-date">
+                                                                <FaRegCalendarAlt size={12} style={{ marginRight: '5px', opacity: 0.7 }} />
+                                                                {t('festivals_card_duration_simple', {
+                                                                    startDate: formatDateToDots(festival['축제시작일자']),
+                                                                    endDate: formatDateToDots(festival['축제종료일자'])
+                                                                })}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {recommendations.length > 8 && (
+                                            <div className="section-more-button-container">
+                                                <Link to="/festivals?filter=recommended" className="section-more-button">{t('view_more_recommendations')}</Link>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p className="info-message">{t('home_no_recommendations_data')}</p>
+                                )
+                        }
                     </section>
                 )}
                 {!isLoggedIn && (
@@ -313,80 +597,118 @@ class Home extends Component {
                     </section>
                 )}
 
-                {/* 6. "여행 꿀팁" 섹션 */}
                 <section className="home-section travel-tips-section">
                     <h2 className="home-section-title"><FaInfoCircle /> {t('home_travel_tips_title')}</h2>
                     <div className="travel-tips-list">
-                        {travelTips.map(tip => (
-                            <Link to={tip.link} key={tip.id} className="travel-tip-item">
-                                <div className="tip-icon-wrapper">{tip.icon}</div>
-                                <div className="tip-content">
-                                    <h4 className="tip-title">{t(tip.titleKey)}</h4>
-                                    <p className="tip-summary">{t(tip.summaryKey)}</p>
-                                </div>
-                                <FaChevronRight className="tip-arrow" />
-                            </Link>
-                        ))}
+                        {loadingTips ? (
+                            <p className="loading-message">{t('loading_data', '데이터를 불러오는 중...')}</p>
+                        ) : tipsError ? (
+                            <p className="error-message">{tipsError}</p>
+                        ) : hottestTips.length > 0 ? (
+                            hottestTips.map(tip => (
+                                <Link to={`/community/post/${tip.id}`} key={tip.id} className="travel-tip-item">
+                                    <div className="tip-icon-wrapper"><FaPlaneDeparture size={24} /></div>
+                                    <div className="tip-content">
+                                        <h4 className="tip-title">{tip.title}</h4>
+                                        <p className="tip-summary">{tip.content}</p>
+                                    </div>
+                                    <FaChevronRight className="tip-arrow" />
+                                </Link>
+                            ))
+                        ) : (
+                            <p className="info-message">{t('no_travel_tips_yet', '아직 등록된 꿀팁이 없습니다.')}</p>
+                        )}
                     </div>
                 </section>
 
-                {/* 7. 서비스 배너 섹션 */}
-                {serviceBanners.length > 0 && (
+                {serviceBannersData.length > 0 && (
                     <section className="home-section service-banner-section">
                         <h2 className="home-section-title"><FaLightbulb /> {t('home_partner_services_title')}</h2>
                         <div className="service-banner-grid">
-                            {serviceBanners.map(banner => (
-                                <Link to={banner.link} key={banner.id} className="service-banner-item" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${banner.image})` }}>
-                                    <div className="service-banner-overlay">
-                                        <h3 className="service-banner-title">{t(banner.titleKey)}</h3>
-                                        <p className="service-banner-desc">{t(banner.descriptionKey)}</p>
-                                        <span className="service-banner-cta">{t('learn_more')} <FaChevronRight /></span>
-                                    </div>
-                                </Link>
-                            ))}
+                            {serviceBannersData.map(banner => {
+                                // ▼▼▼▼▼ 링크를 동적으로 설정하는 로직 ▼▼▼▼▼
+                                let finalLink = banner.link; // 1. 기본 링크로 시작합니다.
+
+                                // "꿀팁" 배너 (id: 'sb1')의 링크를 '/community/tips'로 변경
+                                if (banner.id === 'sb1') {
+                                    finalLink = '/community/tips';
+                                }
+
+                                // "우리 지역" 배너 (id: 'sb2')의 링크를 조건부로 변경
+                                if (banner.id === 'sb2') {
+                                    if (isLoggedIn && userRegion) {
+                                        finalLink = `/region/${encodeURIComponent(userRegion)}`;
+                                    } else {
+                                        finalLink = '/regions';
+                                    }
+                                }
+                                // ▲▲▲▲▲ 로직 끝 ▲▲▲▲▲
+
+                                // 4. 최종 결정된 링크(finalLink)를 사용합니다.
+                                return (
+                                    <Link to={finalLink} key={banner.id} className="service-banner-item" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${banner.image})` }}>
+                                        <div className="service-banner-overlay">
+                                            <h3 className="service-banner-title">{t(banner.titleKey)}</h3>
+                                            <p className="service-banner-desc">{t(banner.descriptionKey)}</p>
+                                            <span className="service-banner-cta">{t('learn_more')} <FaChevronRight /></span>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </section>
                 )}
 
-                {/* 8. "커뮤니티 하이라이트" */}
                 <section className="home-section community-highlights-section">
                     <h2 className="home-section-title"><FaComments />{t('home_community_highlights_title')}</h2>
-                    <div className="community-highlights-grid">
-                        {communityHighlights.map(highlight => (
-                            <Link to={highlight.link} key={highlight.id} className="community-highlight-card">
-                                <div className="community-card-image-wrapper">
-                                    <img src={`${process.env.PUBLIC_URL}${highlight.image}`} alt={t(highlight.titleKey)} className="community-card-image" />
-                                </div>
-                                <div className="community-card-content">
-                                    <span className={`highlight-type-badge type-${highlight.typeKey}`}>{t(highlight.typeKey)}</span>
-                                    <h4 className="highlight-title-card">{t(highlight.titleKey)}</h4>
-                                    <div className="highlight-meta">
-                                        <span className="highlight-author-card">{t('by_author', { author: highlight.author })}</span>
-                                        <span className="highlight-likes-card"><FaRegStar style={{ marginRight: '4px' }} /> {highlight.likes}</span>
+                    {loadingHighlights ? (
+                        <p className="loading-message">{t('loading_data', '데이터를 불러오는 중...')}</p>
+                    ) : highlightsError ? (
+                        <p className="error-message">{highlightsError}</p>
+                    ) : communityHighlights.length > 0 ? (
+                        <div className="community-highlights-grid">
+                            {communityHighlights.map(highlight => (
+                                <Link to={`/community/post/${highlight.id}`} key={highlight.id} className="community-highlight-card">
+                                    <div className="community-card-image-wrapper">
+                                        <img src={highlight.imageUrl || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                                            alt={highlight.title}
+                                            className="community-card-image"
+                                            onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder.png`; }}
+                                        />
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
+                                    <div className="community-card-content">
+                                        <span className={`highlight-type-badge type-community_type_${highlight.category.toLowerCase()}`}>
+                                            {t(`community_category_${highlight.category.toLowerCase()}`, highlight.category)}
+                                        </span>
+                                        <h4 className="highlight-title-card">{highlight.title}</h4>
+                                        <div className="highlight-meta">
+                                            <span className="highlight-author-card">{t('by_author', { author: highlight.author === 'admin' ? '운영팀' : highlight.author })}</span>
+                                            <span className="highlight-likes-card"><FaRegStar style={{ marginRight: '4px' }} /> {highlight.likes}</span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="info-message">{t('no_highlights_yet', '아직 추천할 만한 이야기가 없어요.')}</p>
+                    )}
                     <div className="section-more-button-container">
                         <Link to="/community" className="section-more-button">{t('view_more_community')}</Link>
                     </div>
                 </section>
 
-                {/* 9. 일자리 정보 섹션 */}
                 <section className="home-section job-info-section vibrant-bg">
                     <div className="job-info-content">
                         <FaHandsHelping className="job-info-icon" />
                         <h2 className="home-section-title secondary inverted">{t('home_job_title')}</h2>
                         <p className="inverted-text">{t('home_job_desc1')}</p>
                         <p className="inverted-text">{t('home_job_desc2')}</p>
-                        <button className="hero-slide-button alt-button" onClick={this.handleJobInfoClick}>
-                            {t('home_job_button')} <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
-                        </button>
+                        <Link to="/apply" className="hero-slide-button alt-button">
+                        {t('home_job_button')} <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
+                        </Link>
                     </div>
                 </section>
 
-                {/* 10. 푸터 */}
                 <footer className="home-footer">
                     <div className="footer-content-wrapper">
                         <div className="footer-top-row">

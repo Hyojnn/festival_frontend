@@ -1,0 +1,1124 @@
+/* CommunityPage.css */
+
+/* 기본 컨테이너 */
+.community-page-container {
+    max-width: 1200px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+}
+
+.community-header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+    .community-header h1 {
+        font-size: 2.8em;
+        color: #4CAF50; /* Vibrant green */
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .community-header p {
+        font-size: 1.1em;
+        color: #555;
+        line-height: 1.6;
+    }
+
+.community-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.write-post-button {
+    background-color: #4CAF50; /* Vibrant green */
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05em;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+    .write-post-button:hover {
+        background-color: #45a049;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+.search-input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    width: 250px;
+    font-size: 1em;
+}
+
+/* 섹션 공통 스타일 */
+.community-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
+    .section-title .section-icon {
+        color: #4CAF50; /* Vibrant green */
+        margin-right: 10px;
+        font-size: 1.1em;
+    }
+
+/* 공지사항 섹션 (CommunityPage.jsx 내부) */
+/* 공지사항 섹션 (CommunityPage.jsx 내부) */
+.notice-section {
+    background-color: #e8f5e9; /* Light green background */
+    border: 1px solid #c8e6c9;
+}
+
+.notice-list-display { /* 여러 공지를 표시하기 위한 새로운 div */
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* 공지사항 항목 간 간격 */
+    padding: 10px 0;
+}
+
+.notice-item {
+    display: flex;
+    /* align-items: center; -> align-items: flex-start;로 변경 */
+    align-items: flex-start; /* 내부 요소들을 상단에 정렬 */
+    padding: 12px 10px; /* 패딩 조정 */
+    border-bottom: 1px dashed #cfe9d0;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s ease;
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+    .notice-item:last-child {
+        border-bottom: none;
+    }
+
+    .notice-item:hover {
+        background-color: #dcedc8; /* Lighter green on hover */
+    }
+
+.notice-badge {
+    background-color: #4CAF50; /* Vibrant green */
+    color: white;
+    font-size: 0.8em;
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-right: 15px;
+    flex-shrink: 0;
+    font-weight: 600;
+    /* 뱃지의 높이를 일정하게 유지하여 텍스트 베이스라인에 영향을 받지 않도록 */
+    line-height: 1; /* 추가 */
+    align-self: flex-start; /* 뱃지 자체를 상단으로 정렬 */
+}
+
+    .notice-badge.notice_badge_important { /* 중요 공지 뱃지 스타일 */
+        background-color: #FF5722; /* Deep Orange */
+    }
+
+/* --- 공지 제목과 설명을 감싸는 컨테이너 추가 --- */
+.notice-text-content { /* 이 클래스를 CommunityPage.jsx의 h3, p 태그를 감싸도록 추가 */
+    flex-grow: 1; /* 사용 가능한 모든 공간을 차지하도록 */
+    margin-right: 10px; /* 화살표와의 간격 */
+}
+
+.notice-title {
+    font-size: 1.1em; /* 폰트 크기 약간 줄임 */
+    font-weight: 600;
+    margin-top: 0;
+    /* margin-bottom: 5px; -> 0으로 변경 (다음 줄로 시작) */
+    margin-bottom: 0; /* 제목과 설명 사이 간격 조정 */
+    line-height: 1.4;
+    color: #333;
+    /* flex-grow: 1; -> notice-text-content로 이동 */
+    /* white-space: nowrap; -> 제거 (줄바꿈 허용) */
+    white-space: normal; /* 정상 줄바꿈 허용 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* -webkit-line-clamp: 1; -> 제거 (전체 내용 표시) */
+    display: -webkit-box; /* 추가 */
+    -webkit-line-clamp: 2; /* 2줄까지만 보이도록 (조절 가능) */
+    -webkit-box-orient: vertical; /* 추가 */
+}
+
+.notice-description {
+    font-size: 0.85em; /* 폰트 크기 약간 줄임 */
+    color: #666;
+    line-height: 1.5;
+    margin-top: 5px; /* 제목과의 간격 */
+    margin-left: 0; /* 기존 마진 제거 */
+    /* flex-basis: 100%; -> 제거 (notice-text-content가 flex-grow 1을 가짐) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 두 줄로 제한 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* --- 공지 제목과 설명을 감싸는 컨테이너 추가 끝 --- */
+
+
+.notice-item .tip-arrow { /* 화살표 아이콘 */
+    margin-left: auto; /* 항상 오른쪽 끝으로 이동 */
+    color: #4CAF50;
+    font-size: 0.9em;
+    flex-shrink: 0;
+    align-self: center; /* 아이콘 자체를 세로 중앙 정렬 */
+}
+
+/* 인기 게시글 (하이라이트) 그리드 */
+.highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.highlight-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden; /* 이 속성을 추가/확인하여 이미지가 둥근 모서리 밖으로 나가지 않도록 합니다. */
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+    .highlight-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+.highlight-image-wrapper {
+    width: 100%;
+    padding-top: 75%; /* 4:3 종횡비 (높이가 너비의 75%) */
+    position: relative;
+    overflow: hidden;
+    background-color: #e0e0e0; /* 이미지가 없을 때의 배경색 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: 8px; /* 이 주석을 제거하고 유지 */
+    border-top-right-radius: 8px; /* 이 주석을 제거하고 유지 */
+}
+
+.highlight-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지를 컨테이너에 꽉 채우되, 비율을 유지하며 필요시 잘라냄 */
+    display: block;
+    border-top-left-radius: 8px; /* 이 주석을 제거하고 유지 */
+    border-top-right-radius: 8px; /* 이 주석을 제거하고 유지 */
+}
+
+.highlight-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.highlight-type-badge {
+    display: inline-block;
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+    .highlight-type-badge.type-community_type_review {
+        background-color: #FFECB3;
+        color: #FFC107;
+    }
+
+    .highlight-type-badge.type-community_type_tip {
+        background-color: #BBDEFB;
+        color: #2196F3;
+    }
+
+    .highlight-type-badge.type-community_type_photo {
+        background-color: #DCEDC8;
+        color: #8BC34A;
+    }
+
+.highlight-title-card {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.highlight-meta {
+    font-size: 0.85em;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #f5f5f5;
+}
+
+.highlight-likes-card {
+    display: flex;
+    align-items: center;
+    color: #FF5722;
+}
+
+
+/* 여행 꿀팁 섹션 (home.jsx와 유사하게) */
+.travel-tips-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.travel-tip-item {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .travel-tip-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+.tip-icon-wrapper {
+    background-color: #e0f2f1; /* Light cyan */
+    color: #009688; /* Teal */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 15px;
+    font-size: 1.5em;
+}
+
+.tip-content {
+    flex-grow: 1;
+}
+
+.tip-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.tip-summary {
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tip-arrow {
+    color: #4CAF50; /* Vibrant green */
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+/* 일반 게시판 목록 */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.post-item {
+    background-color: #fcfcfc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .post-item:hover {
+        border-color: #c8e6c9; /* Light green border */
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+.post-meta {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.post-category {
+    background-color: #e0e0e0;
+    color: #555;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.post-author, .post-date {
+    margin-right: 10px;
+}
+
+.post-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.post-summary {
+    font-size: 0.95em;
+    color: #666;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 모든 섹션의 "더 보기" 버튼 */
+.section-more-button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.section-more-button {
+    display: inline-block;
+    padding: 10px 25px;
+    border: 1px solid #4CAF50;
+    border-radius: 20px;
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .section-more-button:hover {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+/* PostDetailPage, NoticeListPage, WritePostPage, InfoTravelTipsPage, InfoSafetyGuidePage, InfoJobOpportunitiesPage 에서 사용될 공통 헤더 스타일 */
+.post-detail-header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+    .post-detail-header h1 {
+        font-size: 2.2em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .post-detail-header .back-button {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        background: none;
+        border: none;
+        color: #4CAF50;
+        font-size: 1em;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s ease;
+    }
+
+        .post-detail-header .back-button:hover {
+            color: #45a049;
+        }
+
+
+/* 게시글 상세 페이지 (PostDetailPage) */
+.post-detail-card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+    .post-detail-card h2 {
+        font-size: 2em;
+        color: #333;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+.post-meta-detail {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+    .post-meta-detail span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .post-meta-detail .meta-type-badge {
+        background-color: #e0e0e0;
+        color: #555;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+
+.post-content-detail {
+    font-size: 1em;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+    .post-content-detail p {
+        margin-bottom: 1em;
+    }
+
+.comments-section h3 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.comment-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+    .comment-item .comment-author {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .comment-item .comment-text {
+        font-size: 0.95em;
+        line-height: 1.6;
+        color: #333;
+    }
+
+
+/* 글쓰기 페이지 (WritePostPage) */
+.write-post-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .write-post-header h1 {
+        font-size: 2.5em;
+        color: #4CAF50;
+        margin-bottom: 10px;
+    }
+
+    .write-post-header p {
+        font-size: 1.1em;
+        color: #555;
+    }
+
+.write-post-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+    .write-post-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .write-post-form label {
+        display: block;
+        font-size: 1.1em;
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .write-post-form input[type="text"],
+    .write-post-form textarea,
+    .write-post-form select {
+        width: calc(100% - 22px); /* Padding 고려 */
+        padding: 12px 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: 'Noto Sans KR', sans-serif;
+        transition: border-color 0.2s ease;
+    }
+
+        .write-post-form input[type="text"]:focus,
+        .write-post-form textarea:focus,
+        .write-post-form select:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+    .write-post-form textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .write-post-form select {
+        width: 100%;
+        -webkit-appearance: none; /* 기본 드롭다운 화살표 제거 */
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2C114.1L146.2%2C254.9L5.4%2C114.1H287z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 10px top 50%;
+        background-size: 12px auto;
+    }
+
+    .write-post-form .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .write-post-form .submit-button,
+    .write-post-form .cancel-button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .write-post-form .submit-button {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+        .write-post-form .submit-button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+
+    .write-post-form .cancel-button {
+        background-color: #f44336; /* Red for cancel */
+        color: white;
+    }
+
+        .write-post-form .cancel-button:hover:not(:disabled) {
+            background-color: #d32f2f;
+        }
+
+    .write-post-form button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+
+/* NoticeListPage (모든 공지사항) 에서 사용될 스타일 */
+.notice-list-page-section { /* 모든 공지 페이지 섹션 */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ✨ 공지글 목록 헤더 (테이블 형식 제거) */
+/* .notice-list-table-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px;
+    gap: 10px;
+    padding: 15px 0;
+    border-bottom: 2px solid #4CAF50;
+    font-weight: 700;
+    color: #333;
+    font-size: 1.05em;
+    text-align: center;
+}
+
+.notice-list-table-header .notice-header-title {
+    text-align: left;
+} */
+
+.notice-list-full {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notice-list-full-item {
+    display: flex; /* Flexbox로 변경 */
+    flex-wrap: wrap; /* 내용이 길어지면 다음 줄로 */
+    align-items: flex-start; /* 상단 정렬 */
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+    .notice-list-full-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .notice-list-full-item:last-child {
+        border-bottom: none;
+    }
+
+    .notice-list-full-item.is-important {
+        background-color: #fffde7; /* 중요 공지 배경색 */
+        border-left: 5px solid #FFC107; /* 중요 공지 좌측 테두리 */
+        padding-left: 15px; /* 테두리 공간 확보 */
+    }
+
+        /* 중요 공지 뱃지 배경색과 텍스트 색상 */
+        .notice-list-full-item.is-important .notice-type-badge {
+            background-color: #FF5722; /* 빨간색 배경 */
+            color: white; /* 흰색 텍스트 */
+            font-weight: 700; /* 폰트 굵게 */
+        }
+
+    .notice-list-full-item .notice-list-full-link {
+        display: flex; /* 내부 컨텐츠를 flex로 정렬 */
+        flex-wrap: wrap; /* 내부 컨텐츠도 필요시 줄바꿈 */
+        align-items: center; /* 세로 중앙 정렬 (내부 요소에 따라 조정 필요) */
+        text-decoration: none;
+        color: inherit;
+        flex-grow: 1; /* 링크가 가능한 공간을 모두 차지하도록 */
+    }
+
+    .notice-list-full-item .notice-type-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e0e0e0;
+        color: #555;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 0.85em;
+        font-weight: 600;
+        flex-shrink: 0; /* 내용이 길어져도 뱃지 크기 고정 */
+        margin-right: 15px; /* 뱃지와 제목 사이 간격 */
+    }
+
+    /* ✨ 제목과 설명을 담는 래퍼 추가 */
+    .notice-list-full-item .notice-content-wrapper {
+        flex-grow: 1; /* 제목과 설명이 가능한 공간을 채우도록 */
+    }
+
+    .notice-list-full-item .notice-list-full-title {
+        font-size: 1.1em; /* 폰트 크기 약간 키움 */
+        font-weight: 600;
+        color: #333;
+        text-align: left;
+        margin-bottom: 5px; /* 제목과 설명 사이 간격 */
+    }
+
+    /* ✨ 공지글 설명 스타일 추가 */
+    .notice-list-full-item .notice-list-full-description {
+        font-size: 0.9em;
+        color: #666;
+        line-height: 1.4;
+        text-align: left;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* 두 줄로 제한 */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .notice-list-full-item .notice-list-full-date {
+        font-size: 0.85em; /* 날짜 폰트 크기 약간 줄임 */
+        color: #888;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; /* 오른쪽 정렬 */
+        gap: 5px;
+        flex-shrink: 0; /* 내용이 길어져도 날짜 크기 고정 */
+        margin-left: 20px; /* 제목과 날짜 사이 간격 */
+        white-space: nowrap; /* 날짜 줄바꿈 방지 */
+    }
+
+
+/* PopularPostListPage (모든 인기 게시글) 에서 사용될 스타일 */
+.popular-post-list-section .post-item {
+    /* 기존 .post-item 스타일 상속 */
+}
+
+.popular-post-list-section .post-summary-meta {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 0.85em;
+    color: #888;
+}
+
+.popular-post-list-section .post-likes {
+    color: #FF5722;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+/* TravelTipListPage (모든 꿀팁) 에서 사용될 스타일 */
+.travel-tip-list-section .travel-tips-list {
+    /* 기존 .travel-tips-list 스타일 상속 */
+}
+
+.travel-tip-list-section .travel-tip-item {
+    /* 기존 .travel-tip-item 스타일 상속 */
+}
+
+
+/* InfoTravelTipsPage, InfoSafetyGuidePage, InfoJobOpportunitiesPage (정보성 페이지) 에서 사용될 스타일 */
+.info-content-section .info-content {
+    font-size: 1em;
+    line-height: 1.8;
+    color: #444;
+    padding: 10px;
+}
+
+    .info-content-section .info-content p {
+        margin-bottom: 1em;
+    }
+
+/* ✨ 미디어 쿼리 - 작은 화면 대응 (선택 사항) */
+@media (max-width: 768px) {
+    .notice-list-full-item {
+        grid-template-columns: 80px 1fr; /* 작은 화면에서는 날짜를 아래로 */
+        align-items: flex-start;
+        flex-direction: column; /* 전체 아이템을 세로로 정렬 */
+        gap: 5px;
+    }
+
+        .notice-list-full-item .notice-list-full-link {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            gap: 5px;
+        }
+
+        .notice-list-full-item .notice-content-wrapper {
+            width: 100%; /* 제목/설명 래퍼 전체 너비 */
+        }
+
+        .notice-list-full-item .notice-type-badge {
+            margin-right: 0;
+            margin-bottom: 5px; /* 뱃지 아래 여백 */
+        }
+
+        .notice-list-full-item .notice-list-full-date {
+            justify-content: flex-start; /* 날짜 왼쪽 정렬 */
+            margin-left: 0;
+            width: 100%;
+        }
+}
+
+/* communityPage.css 에 추가 */
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    gap: 5px; /* 버튼 사이 간격 */
+}
+
+.pagination-button {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1em;
+    min-width: 40px; /* 버튼 최소 너비 */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+    .pagination-button:hover:not(:disabled):not(.active) {
+        background-color: #e0e0e0;
+        border-color: #ccc;
+    }
+
+    .pagination-button.active {
+        background-color: #4CAF50; /* Vibrant green */
+        color: white;
+        border-color: #4CAF50;
+        font-weight: bold;
+    }
+
+    .pagination-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        background-color: #f7f7f7;
+        color: #aaa;
+    }
+
+    .pagination-button svg {
+        vertical-align: middle; /* 아이콘 세로 정렬 */
+    }
+
+/* communityPage.css 파일 맨 아래에 추가 (기존 댓글 CSS는 삭제 후 교체) */
+
+/* --- 댓글 섹션 전체 --- */
+.comments-section {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #e9ecef;
+}
+
+    .comments-section > h3 {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+/* --- 댓글 작성 폼 --- */
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+    .comment-form textarea {
+        width: 100%;
+        min-height: 90px;
+        padding: 12px 15px;
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        font-size: 1em;
+        line-height: 1.6;
+        resize: vertical;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #4C80F1;
+            box-shadow: 0 0 0 3px rgba(76, 128, 241, 0.15);
+        }
+
+    .comment-form button[type="submit"] {
+        align-self: flex-end;
+        padding: 10px 22px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .comment-form button[type="submit"]:hover {
+            background-color: #555;
+        }
+
+/* --- 댓글 목록 --- */
+.comment-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 개별 댓글 아이템 --- */
+.comment-item {
+    display: flex;
+    gap: 15px;
+    padding: 20px 5px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.comment-list .comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-avatar {
+    font-size: 28px;
+    color: #adb5bd;
+    margin-top: 3px;
+}
+
+.comment-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 1.05em;
+    color: #212529;
+}
+
+.comment-date {
+    font-size: 0.8em;
+    color: #868e96;
+}
+
+.comment-text {
+    color: #343a40;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* --- 댓글 기능 버튼 (좋아요, 수정, 삭제) --- */
+.comment-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+    .comment-actions .like-action button {
+        background: none;
+        border: none;
+        color: #868e96;
+        cursor: pointer;
+        font-size: 0.9em;
+        padding: 2px 4px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+    }
+
+        .comment-actions .like-action button:hover {
+            color: #e54141;
+        }
+
+        .comment-actions .like-action button:disabled {
+            cursor: not-allowed;
+            color: #adb5bd;
+        }
+
+            .comment-actions .like-action button:disabled:hover {
+                color: #adb5bd; /* 비활성화 시 호버 색상 변경 없음 */
+            }
+
+
+.comment-owner-actions {
+    display: flex;
+    gap: 15px;
+}
+
+    .comment-owner-actions button {
+        background: none;
+        border: none;
+        color: #868e96;
+        cursor: pointer;
+        font-size: 0.9em;
+    }
+
+        .comment-owner-actions button:hover {
+            text-decoration: underline;
+        }
+
+/* --- 댓글 수정 폼 --- */
+.comment-edit-form {
+    margin-top: 5px;
+}
+
+    .comment-edit-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        margin-bottom: 8px;
+    }
+
+.comment-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+    .comment-edit-actions button {
+        font-size: 0.9em;
+        padding: 5px 12px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        cursor: pointer;
+    }
+
+        .comment-edit-actions button:first-of-type {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+        }

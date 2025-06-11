@@ -1,5 +1,5 @@
 ﻿// frontend/src/App.js
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Home from './components/home';
 import Login from './components/Login';
@@ -10,11 +10,23 @@ import RegionsListPage from './components/RegionsListPage';
 import RegionPage from './components/RegionPage';
 import FindAccount from './components/FindAccount';
 import SearchOverlay from './components/SearchOverlay';
-import NavBar from './components/NavBar'; // NavBar를 여기서 import
+import NavBar from './components/NavBar';
 import BannerThemeFestivalsPage from './components/BannerThemeFestivalsPage';
 import Map from './components/map';
+import MyPage from './components/MyPage'; // ✨ MyPage 컴포넌트 import
+import SupportForm from './components/apply';
+import { NotificationProvider } from './contexts/NotificationContext';
 
-// 로딩 중 표시할 간단한 UI
+const CommunityPage = lazy(() => import('./components/CommunityPage'));
+const PostDetailPage = lazy(() => import('./components/PostDetailPage'));
+const WritePostPage = lazy(() => import('./components/WritePostPage'));
+const NoticeListPage = lazy(() => import('./components/NoticeListPage'));
+const TravelTipListPage = lazy(() => import('./components/TravelTipListPage'));
+const InfoTravelTipsPage = lazy(() => import('./components/InfoTravelTipsPage'));
+const InfoSafetyGuidePage = lazy(() => import('./components/InfoSafetyGuidePage'));
+const AllPostsListPage = lazy(() => import('./components/AllPostsListPage'));
+
+
 const LoadingFallback = () => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         Loading translations...
@@ -24,13 +36,13 @@ const LoadingFallback = () => (
 function AppContent() {
     const [isSearchOverlayOpen, setIsSearchOverlayOpen] = useState(false);
     const location = useLocation();
+    const storedUserId = localStorage.getItem("userId") || null;
 
     const toggleSearchOverlay = () => {
         setIsSearchOverlayOpen(prev => !prev);
     };
 
     useEffect(() => {
-        // 페이지 이동 시 검색 오버레이 닫기 (선택적)
         if (isSearchOverlayOpen) {
             setIsSearchOverlayOpen(false);
         }
@@ -49,15 +61,9 @@ function AppContent() {
 
     return (
         <>
-            {/* NavBar를 Routes 바깥에 한 번만 렌더링하고 필요한 props 전달 */}
             <NavBar toggleSearchOverlay={toggleSearchOverlay} />
-            {/* NavBar 높이(70px) + .main-header의 상하 패딩 (1.5rem * 2 = 약 48px) = 약 118px */}
-            {/* 정확한 값은 폰트 크기에 따라 달라질 수 있으므로, 개발자 도구에서 .main-header의 실제 높이를 확인하고 적용하는 것이 가장 좋습니다. */}
-            <div className="main-content-area" style={{ paddingTop: '118px' }}> {/* <<< paddingTop 값 조정 */}
+            <div className="main-content-area" style={{ paddingTop: '118px' }}>
                 <Routes>
-                    {/* 이제 각 페이지 컴포넌트에는 toggleSearchOverlay를 전달할 필요가 없습니다.
-                        NavBar가 AppContent 레벨에서 직접 toggleSearchOverlay를 받기 때문입니다.
-                    */}
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Register />} />
@@ -68,7 +74,22 @@ function AppContent() {
                     <Route path="/region/:regionName" element={<RegionPage />} />
                     <Route path="/find-account" element={<FindAccount />} />
                     <Route path="/banner-theme/:themeKey" element={<BannerThemeFestivalsPage />} />
-                    <Route path="/map" element={<Map />} /> 
+                    <Route path="/map" element={<Map />} />
+                    <Route path="/apply" element={<SupportForm userId={storedUserId} />} />
+                    <Route path="/mypage" element={<MyPage />} /> {/* ✨ 마이페이지 라우트 추가 */}
+
+                    {/* 커뮤니티 관련 라우트 */}
+                    <Route path="/community" element={<CommunityPage />} />
+                    <Route path="/community/post/:id" element={<PostDetailPage />} />
+                    <Route path="/community/write" element={<WritePostPage />} />
+                    <Route path="/community/notices" element={<NoticeListPage />} />
+                    <Route path="/community/tips" element={<TravelTipListPage />} />
+                    <Route path="/community/posts" element={<AllPostsListPage />} />
+
+                    {/* 정보성 페이지 라우트 */}
+                    <Route path="/info/travel_tips" element={<InfoTravelTipsPage />} />
+                    <Route path="/info/safety_guide" element={<InfoSafetyGuidePage />} />
+
                 </Routes>
             </div>
             <SearchOverlay isOpen={isSearchOverlayOpen} onClose={toggleSearchOverlay} />
@@ -79,9 +100,12 @@ function AppContent() {
 function App() {
     return (
         <Suspense fallback={<LoadingFallback />}>
-            <Router>
-                <AppContent />
-            </Router>
+            {/* ▼▼▼▼▼ [확인!] Router가 NotificationProvider 안에 있는지 확인하세요! ▼▼▼▼▼ */}
+            <NotificationProvider>
+                <Router>
+                    <AppContent />
+                </Router>
+            </NotificationProvider>
         </Suspense>
     );
 }

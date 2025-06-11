@@ -5,93 +5,105 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* 배경 약간 더 어둡게 */
+    background-color: rgba(0, 0, 0, 0.7); /* 배경 더 어둡게 */
     z-index: 1999;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-start; /* 상단 정렬 */
     justify-content: center;
-    padding-top: 8vh; /* 상단 여백 조정 */
+    padding-top: 10vh; /* 상단 여백 증가 */
     overflow-y: auto;
+    animation: fadeIn 0.3s ease-out; /* 부드러운 등장 효과 */
 }
 
 .search-overlay-content {
     background-color: white;
-    padding: 20px 25px;
-    padding-top: 45px; /* 닫기 버튼을 위한 상단 공간 확보 */
-    border-radius: 10px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 680px; /* 최대 너비 약간 증가 */
-    position: relative; /* 닫기 버튼의 기준점 */
-    max-height: 85vh;
+    padding: 25px 30px; /* 패딩 증가 */
+    padding-top: 55px; /* 닫기 버튼 위한 상단 공간 확보 */
+    border-radius: 12px; /* 모서리 더 둥글게 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* 그림자 강화 */
+    width: 95%; /* 너비 약간 증가 */
+    max-width: 720px; /* 최대 너비 증가 */
+    position: relative;
+    max-height: 80vh; /* 최대 높이 조정 */
     display: flex;
     flex-direction: column;
+    animation: slideInTop 0.3s ease-out; /* 부드러운 등장 효과 */
 }
 
 .close-button {
     position: absolute;
-    top: 8px; /* 콘텐츠 박스 상단에서 더 가깝게 */
-    right: 8px; /* 콘텐츠 박스 오른쪽에서 더 가깝게 */
+    top: 15px; /* 콘텐츠 박스 상단에서 여유 공간 확보 */
+    right: 15px; /* 콘텐츠 박스 오른쪽에서 여유 공간 확보 */
     background: none;
     border: none;
-    font-size: 2.2rem; /* 폰트 크기 (너무 작지 않게) */
-    color: #888; /* 기본 색상 */
+    font-size: 2.5rem; /* 폰트 크기 증가 */
+    color: #666; /* 기본 색상 */
     cursor: pointer;
     line-height: 1;
-    padding: 8px; /* 클릭 영역 확보 */
-    z-index: 2000; /* 다른 내부 요소들보다 확실히 위에 표시 */
+    padding: 5px; /* 클릭 영역 확보 */
+    z-index: 2000;
+    transition: color 0.2s ease-in-out;
 }
 
     .close-button:hover {
-        color: #333;
+        color: #ff4d4f; /* 강조색으로 변경 */
+        transform: rotate(90deg); /* 닫기 버튼에 회전 효과 */
     }
 
 .search-overlay-header {
-    margin-bottom: 20px; /* 간격 조정 */
+    margin-bottom: 25px; /* 간격 증가 */
 }
 
 .search-overlay-form {
     display: flex;
     width: 100%;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
+    border: 2px solid #ff4d4f; /* 강조색 테두리 */
+    border-radius: 10px; /* 더 둥근 모서리 */
     overflow: hidden;
+    box-shadow: 0 4px 10px rgba(255, 77, 79, 0.15); /* 강조색 그림자 */
 }
 
 .search-overlay-input {
     flex-grow: 1;
     border: none;
-    padding: 14px 18px;
-    font-size: 1.1rem; /* 입력창 폰트 크기 */
+    padding: 15px 20px; /* 패딩 증가 */
+    font-size: 1.15rem; /* 입력창 폰트 크기 증가 */
     outline: none;
+    color: #333;
 }
 
 .search-overlay-button {
-    background-color: #ff4d4f;
+    background-color: #ff4d4f; /* 강조색 */
     color: white;
     border: none;
-    padding: 0 25px;
-    font-size: 1rem;
+    padding: 0 30px; /* 패딩 증가 */
+    font-size: 1.1rem; /* 폰트 크기 증가 */
     cursor: pointer;
-    transition: background-color 0.2s;
-    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+    transition: background-color 0.2s ease-in-out;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
     .search-overlay-button:hover {
-        background-color: #e04346;
+        background-color: #e04346; /* 어두운 강조색 */
     }
 
-.search-overlay-content .message-feedback.info { /* "결과 없음" 메시지 */
-    margin-top: 0;
-    margin-bottom: 15px;
-    background-color: #f8f9fa; /* 배경색 약간 다르게 */
-    color: #495057;
-    border: 1px solid #dee2e6;
+.search-overlay-content .message-feedback.info {
+    margin-top: 15px; /* 간격 조정 */
+    margin-bottom: 20px;
+    background-color: #ffebe6; /* 부드러운 배경색 */
+    color: #cc4d4d; /* 텍스트 색상 */
+    border: 1px solid #ffbbac; /* 테두리색 */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
 }
 
 
 .search-overlay-recent-searches {
-    margin-bottom: 20px; /* 결과 영역과의 간격 */
+    margin-bottom: 25px; /* 간격 증가 */
     padding-top: 5px;
 }
 
@@ -99,26 +111,28 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 15px; /* 간격 증가 */
 }
 
     .recent-searches-header h4 {
         margin: 0;
-        font-size: 0.95rem;
-        color: #333; /* 헤더 텍스트 색상 */
-        font-weight: 600; /* 헤더 텍스트 두께 */
+        font-size: 1rem; /* 폰트 크기 증가 */
+        color: #555; /* 헤더 텍스트 색상 */
+        font-weight: 700; /* 헤더 텍스트 두께 */
     }
 
 .clear-all-button {
-    font-size: 0.85rem;
+    font-size: 0.9rem; /* 폰트 크기 증가 */
     color: #007bff;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 3px 5px;
+    padding: 5px 8px;
+    transition: color 0.2s ease-in-out;
 }
 
     .clear-all-button:hover {
+        color: #0056b3;
         text-decoration: underline;
     }
 
@@ -128,79 +142,85 @@
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 10px; /* 세로, 가로 간격 */
+    gap: 10px 12px; /* 간격 증가 */
 }
 
 .search-overlay-recent-searches li {
-    background-color: #e9ecef; /* 배경색 변경 */
-    padding: 7px 14px;
-    border-radius: 18px;
-    font-size: 0.9rem;
-    color: #212529; /* 글자색 변경 */
+    background-color: #f2f2f2; /* 배경색 변경 */
+    padding: 8px 16px; /* 패딩 증가 */
+    border-radius: 20px; /* 더 둥글게 */
+    font-size: 0.95rem; /* 폰트 크기 증가 */
+    color: #444; /* 글자색 변경 */
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    border: 1px solid #e0e0e0; /* 테두리 추가 */
 }
 
     .search-overlay-recent-searches li:hover {
-        background-color: #dee2e6;
+        background-color: #e6e6e6; /* 호버 배경색 */
+        color: #000;
     }
 
 .search-overlay-recent-searches .delete-button {
-    margin-left: 10px;
+    margin-left: 12px; /* 간격 증가 */
     background: none;
     border: none;
-    color: #6c757d; /* X 버튼 색상 */
+    color: #999; /* X 버튼 색상 */
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1.2rem; /* 폰트 크기 증가 */
     font-weight: bold;
-    padding: 0 2px;
+    padding: 0 3px;
     line-height: 1;
+    transition: color 0.2s ease-in-out;
 }
 
     .search-overlay-recent-searches .delete-button:hover {
-        color: #dc3545; /* 삭제 호버 색상 */
+        color: #ff4d4f; /* 삭제 호버 색상 */
     }
 
 .search-overlay-results-area {
-    border-top: 1px solid #e0e0e0; /* 구분선 색상 */
-    padding-top: 20px; /* 내부 상단 패딩 */
+    border-top: 1px solid #f0f0f0; /* 구분선 색상 */
+    padding-top: 25px; /* 내부 상단 패딩 증가 */
     flex-grow: 1;
     overflow-y: auto;
 }
 
-    .search-overlay-results-area h3 { /* 검색 결과 타이틀 */
-        font-size: 1.1rem;
+    .search-overlay-results-area h3 {
+        font-size: 1.2rem; /* 폰트 크기 증가 */
         margin-top: 0;
-        margin-bottom: 15px;
+        margin-bottom: 20px; /* 간격 증가 */
         color: #333;
-        font-weight: 600;
+        font-weight: 700;
     }
 
 .results-list {
+    display: grid; /* 그리드 레이아웃 적용 */
+    gap: 15px; /* 아이템 간 간격 */
 }
 
     .results-list .result-item {
-        padding: 12px 8px; /* 아이템 패딩 */
-        border-bottom: 1px solid #f1f1f1; /* 아이템 구분선 */
+        padding: 15px 12px; /* 아이템 패딩 증가 */
+        border: 1px solid #f8f8f8; /* 테두리 */
+        border-radius: 8px; /* 둥근 모서리 */
+        background-color: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* 부드러운 그림자 */
         cursor: pointer;
-        transition: background-color 0.15s;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
 
-        .results-list .result-item:last-child {
-            border-bottom: none;
-        }
-
         .results-list .result-item:hover {
-            background-color: #f8f9fa;
+            transform: translateY(-3px); /* 호버 시 약간 위로 이동 */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* 그림자 강화 */
+            background-color: #fafafa;
         }
 
         .results-list .result-item h4 {
-            margin: 0 0 5px 0;
-            font-size: 1.05rem; /* 제목 폰트 크기 */
-            color: #0069d9; /* 링크 색상 */
-            font-weight: 500;
+            margin: 0 0 8px 0; /* 간격 조정 */
+            font-size: 1.15rem; /* 제목 폰트 크기 증가 */
+            color: #ff4d4f; /* 강조색으로 변경 */
+            font-weight: 600;
         }
 
         .results-list .result-item:hover h4 {
@@ -208,34 +228,88 @@
         }
 
         .results-list .result-item p {
-            margin: 0 0 4px 0;
-            font-size: 0.85rem; /* 부가 정보 폰트 크기 */
-            color: #555; /* 부가 정보 색상 */
+            margin: 0 0 5px 0; /* 간격 조정 */
+            font-size: 0.9rem; /* 부가 정보 폰트 크기 증가 */
+            color: #666; /* 부가 정보 색상 */
         }
+
+            .results-list .result-item p:last-child {
+                margin-bottom: 0;
+            }
+
 
 .search-overlay-content .message-feedback {
     text-align: center;
     padding: 15px;
-    font-size: 0.95rem;
-    border-radius: 6px;
-    margin: 15px 0; /* 로딩/에러 메시지 자체 마진 */
+    font-size: 1rem; /* 폰트 크기 증가 */
+    border-radius: 8px; /* 둥근 모서리 */
+    margin: 20px 0; /* 마진 조정 */
     line-height: 1.5;
+    font-weight: 500;
 }
 
     .search-overlay-content .message-feedback.loading {
-        color: #004085;
-        background-color: #cce5ff;
-        border: 1px solid #b8daff;
+        color: #0056b3; /* 파란색 계열 */
+        background-color: #e6f7ff;
+        border: 1px solid #91d5ff;
     }
 
     .search-overlay-content .message-feedback.error {
-        color: #721c24;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
+        color: #a30000; /* 빨간색 계열 */
+        background-color: #ffe6e6;
+        border: 1px solid #ffb3b3;
+    }
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInTop {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 스크롤바 커스터마이징 */
+.search-overlay-results-area::-webkit-scrollbar,
+.search-overlay-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.search-overlay-results-area::-webkit-scrollbar-track,
+.search-overlay-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.search-overlay-results-area::-webkit-scrollbar-thumb,
+.search-overlay-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+    .search-overlay-results-area::-webkit-scrollbar-thumb:hover,
+    .search-overlay-content::-webkit-scrollbar-thumb:hover {
+        background: #999;
     }
 
 
+/* body 필터 효과 */
 body.search-overlay-active > #root > .main-content-area {
-    filter: blur(4px) brightness(0.7);
-    transition: filter 0.3s ease-out;
+    filter: blur(5px) brightness(0.6); /* 블러 및 어둡기 강화 */
+    transition: filter 0.4s ease-out; /* 전환 시간 증가 */
 }

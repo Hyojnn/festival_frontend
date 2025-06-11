@@ -1,244 +1,206 @@
 // frontend/src/components/FindAccount.jsx
 import React, { Component } from 'react';
 import axios from 'axios';
-import NavBar from './NavBar';
-import '../login.css'; // login.css 스타일 공유
-import { Link } from 'react-router-dom';
-import { withTranslation } from 'react-i18next'; // HOC 추가
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+import '../login.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 class FindAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
             activeTab: 'findId',
+            // 아이디 찾기 상태
             nameForId: '',
             phoneNumberForId: '',
             foundId: '',
             findIdMessage: '',
             nameErrorForId: '',
             phoneErrorForId: '',
+            // 비밀번호 재설정 상태
             usernameForPw: '',
+            phoneNumberForPw: '',
+            phoneErrorForPw: '',
+            isVerifiedForPw: false, // 사용자 확인 여부
+            newPassword: '',
+            confirmNewPassword: '',
             findPwMessage: '',
         };
     }
 
-    resetFormStates = (isIdForm) => {
-        if (isIdForm) {
-            this.setState({
-                nameForId: '',
-                phoneNumberForId: '',
-                foundId: '',
-                findIdMessage: '',
-                nameErrorForId: '',
-                phoneErrorForId: '',
-            });
-        } else {
-            this.setState({
-                usernameForPw: '',
-                findPwMessage: '',
-            });
-        }
-    }
-
+    // 탭 변경 시 상태 초기화
     handleTabChange = (tab) => {
-        this.setState({ activeTab: tab }, () => {
-            if (tab === 'findId') {
-                this.resetFormStates(false);
-            } else {
-                this.resetFormStates(true);
-            }
+        this.setState({
+            activeTab: tab,
+            nameForId: '', phoneNumberForId: '', foundId: '', findIdMessage: '', nameErrorForId: '', phoneErrorForId: '',
+            usernameForPw: '', phoneNumberForPw: '', phoneErrorForPw: '', isVerifiedForPw: false, newPassword: '', confirmNewPassword: '', findPwMessage: ''
         });
     };
 
-    validateName = (name) => {
-        const { t } = this.props;
-        const nameRegex = /^[가-힣]{2,}$/; // 한글 이름 기준, 다른 언어도 지원하려면 정규식 수정 필요
-        if (!name.trim()) return t('validate_name_empty');
-        if (!nameRegex.test(name.trim())) return t('validate_name_format'); // 현재 한국어 기준 메시지
-        return "";
-    };
-
-    validatePhoneNumber = (phone) => {
-        const { t } = this.props;
-        const phoneRegex = /^\d{3}-\d{3,4}-\d{4}$/;
-        if (!phone.trim()) return t('validate_phone_empty');
-        if (!phoneRegex.test(phone.trim())) return t('validate_phone_format');
-        return "";
-    };
-
+    // 입력값 변경 핸들러
     handleChange = (e) => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
-
-        if (this.state.activeTab === 'findId') {
-            if (name === "nameForId") {
-                this.setState({ nameErrorForId: this.validateName(value) });
-            } else if (name === "phoneNumberForId") {
-                this.setState({ phoneErrorForId: this.validatePhoneNumber(value) });
-            }
-        }
-        if (name === "nameForId" || name === "phoneNumberForId") {
-            this.setState({ findIdMessage: '', foundId: '' });
-        }
-        if (name === "usernameForPw") {
-            this.setState({ findPwMessage: '' });
-        }
+        this.setState({ [e.target.name]: e.target.value });
     };
 
+    // 아이디 찾기 핸들러
     handleFindId = async (e) => {
         e.preventDefault();
         const { nameForId, phoneNumberForId } = this.state;
         const { t } = this.props;
-
-        const nameErr = this.validateName(nameForId);
-        const phoneErr = this.validatePhoneNumber(phoneNumberForId);
-
-        this.setState({
-            nameErrorForId: nameErr,
-            phoneErrorForId: phoneErr,
-            findIdMessage: '',
-            foundId: ''
-        });
-
-        if (nameErr || phoneErr) return;
-
         try {
-            const response = await axios.post(
-                `${API_BASE_URL}/api/find-id`,
-                {
-                  name: nameForId.trim(),
-                  phoneNumber: phoneNumberForId.trim(),
-                }
-            );
-
-            if (response.data && response.data.username) {
-                this.setState({ foundId: response.data.username, findIdMessage: t('find_id_found_message') });
-            } else {
-                this.setState({ findIdMessage: response.data.message || t('find_id_not_found_message') });
-            }
+            const response = await axios.post(`${API_BASE_URL}/api/find-id`, { name: nameForId, phoneNumber: phoneNumberForId });
+            this.setState({ foundId: response.data.username, findIdMessage: t('find_id_found_message') });
         } catch (error) {
-            console.error("Error finding ID:", error.response || error.message);
-            this.setState({ findIdMessage: error.response?.data?.message || error.response?.data?.error || t('find_id_error_message') });
+            this.setState({ foundId: '', findIdMessage: error.response?.data?.message || t('find_id_error_message') });
         }
     };
 
-    handleFindPassword = async (e) => {
+    // 비밀번호 재설정을 위한 사용자 확인 핸들러
+    handleVerifyUserForPw = async (e) => {
         e.preventDefault();
-        const { usernameForPw } = this.state;
+        const { usernameForPw, phoneNumberForPw } = this.state;
         const { t } = this.props;
         this.setState({ findPwMessage: '' });
 
-        if (!usernameForPw.trim()) {
-            this.setState({ findPwMessage: t('validate_id_empty') });
+        if (!usernameForPw || !phoneNumberForPw) {
+            this.setState({ findPwMessage: t('find_pw_enter_all_fields', '아이디와 전화번호를 모두 입력해주세요.') });
             return;
         }
 
         try {
-            const response = await axios.post(
-                `${API_BASE_URL}/api/find-pw`, 
-                {
-                username: usernameForPw.trim(),
-                }
-            );
-            if (response.data && response.data.message) {
-                this.setState({ findPwMessage: response.data.message }); // 서버 메시지를 그대로 사용하거나, t()로 번역
-            } else if (response.data && response.data.password) { // 💥 보안 위험 부분
-                this.setState({ findPwMessage: t('find_pw_message_temp_pw_received') });
-            }
-            else {
-                this.setState({ findPwMessage: t('find_pw_not_found_message') });
+            const response = await axios.post(`${API_BASE_URL}/api/verify-user-for-reset`, { username: usernameForPw, phoneNumber: phoneNumberForPw });
+            if (response.data.success) {
+                this.setState({ isVerifiedForPw: true, findPwMessage: '' }); // 확인 성공 시, 상태 변경
             }
         } catch (error) {
-            console.error("Error finding password:", error.response || error.message);
-            this.setState({ findPwMessage: error.response?.data?.message || error.response?.data?.error || t('find_pw_error_message') });
+            this.setState({ findPwMessage: error.response?.data?.message || t('find_pw_verification_fail', '사용자 확인에 실패했습니다.') });
         }
     };
 
-    renderFindIdForm() {
-        const { nameForId, phoneNumberForId, nameErrorForId, phoneErrorForId, findIdMessage, foundId } = this.state;
+    // 새로운 비밀번호 설정 핸들러
+    handleResetPassword = async (e) => {
+        e.preventDefault();
+        const { usernameForPw, newPassword, confirmNewPassword } = this.state;
         const { t } = this.props;
+
+        if (!newPassword || !confirmNewPassword) {
+            this.setState({ findPwMessage: t('find_pw_enter_new_passwords', '새로운 비밀번호와 확인을 모두 입력해주세요.') });
+            return;
+        }
+        if (newPassword !== confirmNewPassword) {
+            this.setState({ findPwMessage: t('password_mismatch', '새로운 비밀번호가 일치하지 않습니다.') });
+            return;
+        }
+        if (newPassword.length < 6) {
+            this.setState({ findPwMessage: t('password_too_short', '새로운 비밀번호는 최소 6자 이상이어야 합니다.') });
+            return;
+        }
+
+        try {
+            const response = await axios.put(`${API_BASE_URL}/api/reset-password`, { username: usernameForPw, newPassword });
+            alert(response.data.message); // 성공 메시지 alert
+            this.props.navigate('/login'); // 로그인 페이지로 이동
+        } catch (error) {
+            this.setState({ findPwMessage: error.response?.data?.message || t('find_pw_reset_fail', '비밀번호 재설정에 실패했습니다.') });
+        }
+    };
+
+    // 아이디 찾기 폼 렌더링
+    renderFindIdForm() {
+        const { t } = this.props;
+        const { nameForId, phoneNumberForId, findIdMessage, foundId } = this.state;
         return (
             <form onSubmit={this.handleFindId}>
                 <div className="input-group">
-                    <label htmlFor="nameForIdInput">{t('find_account_name_label')}</label>
-                    <input type="text" id="nameForIdInput" name="nameForId" placeholder={t('find_account_name_placeholder')}
-                        value={nameForId} onChange={this.handleChange} required />
-                    {nameErrorForId && <p className="error-message" style={{ color: 'red', fontSize: '0.9em', marginTop: '5px', marginBottom: '0px' }}>{nameErrorForId}</p>}
+                    <label>{t('find_account_name_label')}</label>
+                    <input type="text" name="nameForId" value={nameForId} onChange={this.handleChange} placeholder={t('find_account_name_placeholder')} required />
                 </div>
                 <div className="input-group">
-                    <label htmlFor="phoneNumberForIdInput">{t('find_account_phone_label')}</label>
-                    <input type="text" id="phoneNumberForIdInput" name="phoneNumberForId" placeholder={t('find_account_phone_placeholder')}
-                        value={phoneNumberForId} onChange={this.handleChange} required />
-                    {phoneErrorForId && <p className="error-message" style={{ color: 'red', fontSize: '0.9em', marginTop: '5px', marginBottom: '0px' }}>{phoneErrorForId}</p>}
+                    <label>{t('find_account_phone_label')}</label>
+                    <input type="text" name="phoneNumberForId" value={phoneNumberForId} onChange={this.handleChange} placeholder={t('find_account_phone_placeholder')} required />
                 </div>
                 <button type="submit" className="btn-login">{t('find_id_button')}</button>
                 {findIdMessage && (
-                    <p style={{ marginTop: '15px', color: foundId ? 'blue' : 'red', fontWeight: 'bold' }}>
-                        {findIdMessage}
-                        {foundId && <span style={{ display: 'block', marginTop: '5px' }}> {t('find_account_id_label')}: <strong>{foundId}</strong></span>}
+                    <p className={`find-result-message ${foundId ? 'success' : 'error'}`}>
+                        {findIdMessage} {foundId && <strong>{foundId}</strong>}
                     </p>
                 )}
             </form>
         );
     }
 
+    // 비밀번호 찾기(재설정) 폼 렌더링
     renderFindPasswordForm() {
-        const { usernameForPw, findPwMessage } = this.state;
         const { t } = this.props;
+        const { isVerifiedForPw, usernameForPw, phoneNumberForPw, newPassword, confirmNewPassword, findPwMessage } = this.state;
+
+        // 1단계: 사용자 확인 폼
+        if (!isVerifiedForPw) {
+            return (
+                <form onSubmit={this.handleVerifyUserForPw}>
+                    <p className="form-description">{t('find_pw_verification_desc', '비밀번호를 재설정하기 위해 아이디와 전화번호를 입력해주세요.')}</p>
+                    <div className="input-group">
+                        <label>{t('find_account_id_label')}</label>
+                        <input type="text" name="usernameForPw" value={usernameForPw} onChange={this.handleChange} placeholder={t('find_account_id_placeholder')} required />
+                    </div>
+                    <div className="input-group">
+                        <label>{t('find_account_phone_label')}</label>
+                        <input type="text" name="phoneNumberForPw" value={phoneNumberForPw} onChange={this.handleChange} placeholder={t('find_account_phone_placeholder')} required />
+                    </div>
+                    <button type="submit" className="btn-login">{t('find_pw_verify_button', '사용자 확인')}</button>
+                    {findPwMessage && <p className="find-result-message error">{findPwMessage}</p>}
+                </form>
+            );
+        }
+
+        // 2단계: 새 비밀번호 입력 폼
         return (
-            <form onSubmit={this.handleFindPassword}>
+            <form onSubmit={this.handleResetPassword}>
+                <p className="form-description">{t('find_pw_reset_desc', '새로운 비밀번호를 입력해주세요.')}</p>
                 <div className="input-group">
-                    <label htmlFor="usernameForPwInput">{t('find_account_id_label')}</label>
-                    <input type="text" id="usernameForPwInput" name="usernameForPw" placeholder={t('find_account_id_placeholder')}
-                        value={usernameForPw} onChange={this.handleChange} required />
+                    <label>{t('new_password_label', '새로운 비밀번호')}</label>
+                    <input type="password" name="newPassword" value={newPassword} onChange={this.handleChange} required />
                 </div>
-                <button type="submit" className="btn-login">{t('find_password_button')}</button>
-                {findPwMessage && (
-                    <p style={{ marginTop: '15px', color: findPwMessage.includes(t('find_pw_guidance_substring', "발송")) || findPwMessage.includes(t('find_pw_guidance_substring', "안내")) ? 'blue' : 'red', fontWeight: 'bold' }}> {/* "발송" 또는 "안내" 포함 시 파란색 */}
-                        {findPwMessage}
-                    </p>
-                )}
+                <div className="input-group">
+                    <label>{t('confirm_new_password_label', '새로운 비밀번호 확인')}</label>
+                    <input type="password" name="confirmNewPassword" value={confirmNewPassword} onChange={this.handleChange} required />
+                </div>
+                <button type="submit" className="btn-login">{t('find_pw_reset_button', '비밀번호 재설정')}</button>
+                {findPwMessage && <p className="find-result-message error">{findPwMessage}</p>}
             </form>
         );
     }
 
     render() {
         const { activeTab } = this.state;
-        const { t, toggleSearchOverlay } = this.props; // toggleSearchOverlay 추가
+        const { t } = this.props;
         return (
-            <>
-                
-                <div className="login-body">
-                    <div className="login-container" style={{ minHeight: '480px' }}>
-                        <h2>{t('find_account_title')}</h2>
-                        <div className="find-account-tabs" style={{ marginBottom: '20px', textAlign: 'center' }}>
-                            <button
-                                onClick={() => this.handleTabChange('findId')}
-                                className={`tab-btn ${activeTab === 'findId' ? 'active' : ''}`}
-                                style={{ padding: '10px 15px', marginRight: '10px', cursor: 'pointer', border: activeTab === 'findId' ? '2px solid #007bff' : '1px solid #ccc', borderRadius: '5px' }}
-                            >
-                                {t('find_id_tab')}
-                            </button>
-                            <button
-                                onClick={() => this.handleTabChange('findPw')}
-                                className={`tab-btn ${activeTab === 'findPw' ? 'active' : ''}`}
-                                style={{ padding: '10px 15px', cursor: 'pointer', border: activeTab === 'findPw' ? '2px solid #007bff' : '1px solid #ccc', borderRadius: '5px' }}
-                            >
-                                {t('find_password_tab')}
-                            </button>
-                        </div>
+            <div className="login-body">
+                <div className="login-container" style={{ minHeight: '520px' }}>
+                    <h2>{t('find_account_title')}</h2>
+                    <div className="find-account-tabs">
+                        <button onClick={() => this.handleTabChange('findId')} className={`tab-btn ${activeTab === 'findId' ? 'active' : ''}`}>{t('find_id_tab')}</button>
+                        <button onClick={() => this.handleTabChange('findPw')} className={`tab-btn ${activeTab === 'findPw' ? 'active' : ''}`}>{t('find_password_tab')}</button>
+                    </div>
 
-                        {activeTab === 'findId' ? this.renderFindIdForm() : this.renderFindPasswordForm()}
+                    {activeTab === 'findId' ? this.renderFindIdForm() : this.renderFindPasswordForm()}
 
-                        <div style={{ marginTop: '30px', textAlign: 'center' }}>
-                            <Link className="link" to="/login" >{t('find_account_go_to_login_link')}</Link>
-                        </div>
+                    <div className="extra-links">
+                        <Link className="link" to="/login">{t('find_account_go_to_login_link')}</Link>
                     </div>
                 </div>
-            </>
+            </div>
         );
     }
 }
 
-export default withTranslation()(FindAccount); // withTranslation으로 감싸기
+// React Router v6에서는 HOC로 감싼 컴포넌트에 navigate 함수를 직접 전달할 수 없으므로,
+// 래퍼 컴포넌트를 만들어 props로 전달해줍니다.
+function FindAccountWithNavigate(props) {
+    let navigate = useNavigate();
+    return <FindAccount {...props} navigate={navigate} />
+}
+
+export default withTranslation()(FindAccountWithNavigate);

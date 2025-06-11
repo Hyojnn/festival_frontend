@@ -1,0 +1,294 @@
+/* mypage.css */
+
+.mypage-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #343a40;
+}
+
+.mypage-title {
+    font-size: 2.2em;
+    color: #343a40;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.mypage-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+}
+
+.section-title {
+    font-size: 1.5em;
+    color: #212529;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+    .section-title svg {
+        color: #4CAF50;
+    }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* section-title과 동일한 스타일을 위해 margin/padding 조정 */
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+    .section-header .section-title {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+.section-header-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .section-header-button:hover {
+        background-color: #5a6268;
+    }
+
+/* 정보 아이템 */
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #495057;
+    min-width: 120px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-value {
+    color: #212529;
+}
+
+.edit-button-inline {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+    .edit-button-inline:hover {
+        text-decoration: underline;
+    }
+
+
+/* 비밀번호 확인 및 수정 폼 */
+.personal-info-verification {
+    padding: 20px 0;
+}
+
+.edit-form .input-group,
+.verification-form .input-group {
+    margin-bottom: 15px;
+}
+
+.edit-form label,
+.verification-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.edit-form input[type="text"],
+.edit-form input[type="password"],
+.edit-form select,
+.verification-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    box-sizing: border-box;
+}
+
+.edit-form .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-button, .cancel-button, .verify-button, .change-password-button, .edit-button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.save-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.verify-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.change-password-button {
+    background-color: #dc3545;
+    color: white;
+    margin-top: 10px;
+}
+
+.edit-button {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+
+/* 목록 스타일 (게시글, 알림 공통) */
+.mypage-simple-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mypage-list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    gap: 10px;
+}
+
+    .mypage-list-item:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+.item-dismiss-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #adb5bd;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+    .item-dismiss-button:hover {
+        color: #e54141;
+    }
+
+.item-content-wrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.item-category {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #007bff;
+    flex-shrink: 0;
+    width: 70px;
+}
+
+.item-title {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-meta {
+    font-size: 0.85em;
+    color: #6c757d;
+    flex-shrink: 0;
+    min-width: 150px;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+
+/* 페이지네이션 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    gap: 8px;
+}
+
+.page-button {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+    .page-button:hover {
+        background-color: #f1f3f5;
+    }
+
+    .page-button.active {
+        background-color: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+        font-weight: bold;
+    }
+
+
+/* 컨텐츠 없음 메시지 */
+.no-content-message {
+    text-align: center;
+    color: #6c757d;
+    padding: 40px 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}

@@ -23,23 +23,14 @@ const BannerThemeFestivalsPage = () => {
     const [festivals, setFestivals] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [themeName, setThemeName] = useState(''); // 초기값을 빈 문자열 또는 로딩 상태로 설정 가능
+    const [themeName, setThemeName] = useState('');
 
-    // 현재 테마에 맞는 배경 이미지 가져오기
     const currentBackground = themeBackgrounds[themeKey] || themeBackgrounds.default;
 
-    // 테마 이름을 번역하거나 보기 좋게 표시하기 위한 로직 수정
     useEffect(() => {
-        if (themeKey) { // themeKey가 존재할 때만 실행
+        if (themeKey) {
             const titleKey = `banner_theme_${themeKey}_title`;
-            // t 함수는 해당 키에 대한 번역이 없으면 defaultValue를 사용합니다.
             const translatedThemeName = t(titleKey, { defaultValue: t('banner_theme_default_title', { themeKey: themeKey }) });
-
-            // 디버깅을 위해 콘솔 로그 추가
-            console.log(`[BannerThemePage] Initial themeKey: ${themeKey}`);
-            console.log(`[BannerThemePage] Constructed titleKey: ${titleKey}`);
-            console.log(`[BannerThemePage] Translated themeName: ${translatedThemeName}`);
-
             setThemeName(translatedThemeName);
         }
     }, [themeKey, t]);
@@ -57,7 +48,6 @@ const BannerThemeFestivalsPage = () => {
             setFestivals(response.data.festivals || []);
         } catch (err) {
             console.error("BannerThemeFestivalsPage: Error fetching festivals by theme", err);
-            // themeName이 아직 설정되기 전일 수 있으므로, 에러 메시지에는 themeKey를 직접 사용할 수 있습니다.
             let errMsg = t('banner_theme_page_error_loading', { theme: themeName || themeKey });
             if (err.response && err.response.data && (err.response.data.error || err.response.data.message)) {
                 errMsg = err.response.data.error || err.response.data.message;
@@ -67,18 +57,18 @@ const BannerThemeFestivalsPage = () => {
         } finally {
             setLoading(false);
         }
-    }, [themeKey, t, themeName]); // themeName이 변경되면 fetch 함수도 새로 생성되도록 포함
+    }, [themeKey, t, themeName]);
 
     useEffect(() => {
         fetchFestivalsByTheme();
-    }, [fetchFestivalsByTheme]); // fetchFestivalsByTheme 함수 자체가 변경될 때 호출
+    }, [fetchFestivalsByTheme]);
 
     return (
         <div className="banner-theme-festivals-page">
             <header
                 className="themed-hero-section"
                 style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${process.env.PUBLIC_URL}${currentBackground})`, // PUBLIC_URL 사용
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${process.env.PUBLIC_URL}${currentBackground})`,
                     height: '350px',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
@@ -90,7 +80,6 @@ const BannerThemeFestivalsPage = () => {
                     marginBottom: '30px',
                 }}
             >
-                {/* themeName이 설정될 때까지 themeKey를 기본으로 보여주거나 로딩 상태 표시 가능 */}
                 <h1>{themeName || t('loading_results', '로딩 중...')}</h1>
             </header>
 
@@ -106,20 +95,22 @@ const BannerThemeFestivalsPage = () => {
                 {!loading && !error && festivals.length > 0 && (
                     <div className="festival-list"> {/* festival.css의 스타일 재활용 */}
                         {festivals.map((f, i) => (
-                            <div className="festival-card" key={f['축제일련번호'] || `${f['축제명']}-${i}-banner-theme`}>
+                            // resource 필드가 있다면 그것을 key로 사용하는 것이 더 좋습니다.
+                            <div className="festival-card" key={f.resource || `${f.name}-${i}-banner-theme`}>
                                 <img
-                                    src={f['대표이미지'] || `${process.env.PUBLIC_URL}/images/placeholder.png`} // 예시 플레이스홀더
-                                    alt={f['축제명'] || t('festival_image_alt', '축제 이미지')}
+                                    src={f.images?.[0] || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                                    alt={f.name || t('festival_image_alt', '축제 이미지')}
                                     className="festival-card-image"
-                                    onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder.png`; }} // 이미지 로드 실패 시 대체 이미지
+                                    onError={(e) => { e.target.onerror = null; e.target.src = `${process.env.PUBLIC_URL}/images/placeholder.png`; }}
                                 />
                                 <div className="festival-info">
-                                    <h3>{f['축제명']}</h3>
-                                    {f['축제내용'] && <p className="description">{f['축제내용'].slice(0, 100)}{f['축제내용'].length > 100 ? '...' : ''}</p>}
+                                    <h3>{f.name}</h3>
+                                    {f.description && <p className="description">{f.description.slice(0, 100)}{f.description.length > 100 ? '...' : ''}</p>}
                                     <ul>
-                                        <li>{t('festivals_card_duration', { startDate: f['축제시작일자'], endDate: f['축제종료일자'] })}</li>
-                                        <li>{t('festivals_card_location', { location: f['개최장소'] || t('no_location_info') })}</li>
-                                        {f['홈페이지주소'] && <li><a href={f['홈페이지주소']} target="_blank" rel="noopener noreferrer">🔗 {t('festivals_card_homepage')}</a></li>}
+                                        <li>{t('festivals_card_duration', { startDate: f.startDate, endDate: f.endDate })}</li>
+                                        <li>{t('festivals_card_location', { location: f.address || t('no_location_info') })}</li>
+                                        {/* 홈페이지 주소는 현재 API에서 제공되지 않음 */}
+                                        {/* {f.homepage && <li><a href={f.homepage} target="_blank" rel="noopener noreferrer">🔗 {t('festivals_card_homepage')}</a></li>} */}
                                     </ul>
                                 </div>
                             </div>
