@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../SupportForm.css';
 
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SupportForm = ({ userId }) => {
   const [region, setRegion] = useState('');
   const [ageGroup, setAgeGroup] = useState('');
@@ -31,7 +33,7 @@ const SupportForm = ({ userId }) => {
 
     try {
       // 1) 지원 정보 저장
-      await axios.post('http://localhost:5000/api/support-info', {
+      await axios.post(`${API_BASE_URL}/api/support-info`, {
         userId,
         region,
         ageGroup,
@@ -42,7 +44,7 @@ const SupportForm = ({ userId }) => {
       });
 
       // 2) 추천 결과 요청
-      const res = await axios.post('http://localhost:5000/jobrecommend', { userId });
+      const res = await axios.post(`${API_BASE_URL}/api/support-info`, { userId });
       
       setRecommendations(res.data.recommendations || []);
       setSubmitted(true); // 제출 완료 처리
