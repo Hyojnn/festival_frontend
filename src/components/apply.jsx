@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../SupportForm.css';
 
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 const SupportForm = ({ userId }) => {
   const [region, setRegion] = useState('');
   const [ageGroup, setAgeGroup] = useState('');
