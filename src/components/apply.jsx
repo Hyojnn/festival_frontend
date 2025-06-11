@@ -45,6 +45,15 @@ const SupportForm = ({ userId }) => {
         availableTo,
         preferences,
       });
+      console.log('보내는 데이터', {
+        userId,
+        region,
+        ageGroup,
+        jobType,
+        availableFrom,
+        availableTo,
+        preferences,
+});
 
       // 2) 추천 결과 요청
       console.log('추천 요청');
