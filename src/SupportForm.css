@@ -1,93 +1,232 @@
-/* SupportForm.css */
-form {
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #f7f7f7;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+/* SupportForm.css (파란색/청록색 테마로 수정된 최종본) */
+
+/* :root 변수를 사용해 색상 관리를 용이하게 합니다. */
+:root {
+    --form-primary-color: #007bff; /* 주요 색상: 파란색 */
+    --form-primary-dark: #0056b3;
+    --form-secondary-color: #17a2b8; /* 포인트 색상: 청록색 (Teal) */
+    --form-success-color: #28a745; /* 성공 아이콘은 녹색 유지 */
+    --form-text-color: #343a40;
+    --form-text-light: #6c757d;
+    --form-border-color: #ced4da;
+    --form-bg-light: #f8f9fa;
+    --form-bg-white: #ffffff;
 }
 
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 600;
-  color: #333;
+.support-form-body {
+    background: var(--form-bg-light);
+    padding: 40px 20px;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-select, input[type="date"], input[type="checkbox"] {
-  margin-top: 5px;
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
+.support-form-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 20px auto;
+    padding: 40px;
+    background: var(--form-bg-white);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
 }
 
-button {
-  margin-top: 15px;
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-button:hover {
-  background-color: #0056b3;
+.header-icon {
+    font-size: 3rem;
+    color: var(--form-secondary-color); /* 포인트 색상(청록색)으로 변경 */
+    margin-bottom: 15px;
 }
 
-/* 추천 결과 주변 배경 이미지 및 스타일 */
+.header-icon.success {
+    color: var(--form-success-color); /* 성공 표시는 녹색 유지 */
+}
+
+.form-title {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--form-text-color);
+    margin: 0;
+}
+
+.form-description {
+    font-size: 1rem;
+    color: var(--form-text-light);
+    margin-top: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.form-group select,
+.form-group input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--form-border-color);
+    background-color: var(--form-bg-light);
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group select:focus,
+.form-group input[type="date"]:focus {
+    outline: none;
+    border-color: var(--form-primary-color); /* 포커스 시 파란색으로 변경 */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    background-color: var(--form-bg-white);
+}
+
+.date-range-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-range-picker span {
+    color: var(--form-text-light);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--form-primary-color); /* 체크박스 색상 파란색으로 변경 */
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.submit-btn, .reset-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.submit-btn {
+    background-color: var(--form-primary-color); /* 버튼 색상 파란색으로 변경 */
+    color: white;
+    margin-top: 10px;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: var(--form-primary-dark);
+}
+
+.submit-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.submit-btn:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+}
+
+.recommendation-results-container {
+    text-align: center;
+}
+
 .recommendation-list {
-  background-size: cover;
-  padding: 40px 30px;
-  border-radius: 15px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* 추천 카드 크기 키우기 */
 .recommendation-card {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 12px;
-  padding: 25px 20px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    transition: box-shadow 0.2s, transform 0.2s;
 }
-
 .recommendation-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.22);
-}
-
-.recommendation-card h4 {
-  font-size: 1.4rem;
-  margin-bottom: 15px;
-  color: #222;
-}
-
-.recommendation-card p {
-  margin: 6px 0;
-  font-size: 1rem;
-  color: #555;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
 }
 
 .recommendation-card a {
-  margin-top: 20px;
-  font-weight: 600;
-  color: #1e90ff;
-  text-decoration: none;
-  align-self: flex-start;
+    display: block;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
 }
 
-.recommendation-card a:hover {
-  text-decoration: underline;
+.recommendation-card .card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+.recommendation-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--form-text-color);
+    text-align: left;
+}
 
+.recommendation-card .card-link-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--form-primary-color); /* 링크 텍스트 파란색으로 변경 */
+    white-space: nowrap;
+}
+
+.reset-btn {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 30px;
+}
+.reset-btn:hover {
+    background-color: #5a6268;
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 500;
+}
