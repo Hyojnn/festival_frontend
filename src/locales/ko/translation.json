@@ -223,13 +223,19 @@
   "view_all_upcoming_festivals": "주요 축제 전체보기",
   "view_more": "더보기",
   "view_more_community": "커뮤니티 더보기",
+  "view_more_recommendations" : "추천 축제 더보기",
   "register_region_label": "거주 지역",
   "register_region_placeholder": "-- 지역 선택 --",
   "validate_region_empty": "거주 지역을 선택해주세요.",
   "register_alert_fill_all_extended": "모든 필수 정보를 입력하고 거주 지역을 선택해주세요.",
   "nav_community": "커뮤니티",
   "view_all_festivals_short": "전체 축제 보기",
-
+  "festivals_card_duration_simple": "기간: {{startDate}} ~ {{endDate}}",
+  "footer_social_title": "소셜 미디어",
+  "footer_about_us" : "회사 소개",
+  "footer_terms" : "이용약관",
+  "footer_privacy" : "개인정보처리방침",
+  "footer_contact_us" : "문의하기",
 
   "community_page_title": "커뮤니티",
   "community_page_description": "축제에 대한 다양한 이야기와 꿀팁을 나누세요!",
@@ -250,6 +256,7 @@
   "loading_data": "데이터를 불러오는 중...",
 
   "home_service_banner_1_desc": "축제 자원봉사 및 스태프 참여 기회를 놓치지 마세요!",
+  "home_service_banner_2_desc" : "우리 지역의 숨은 명소와 축제를 찾아보세요!",
 
   "travel_tip_1_title": "짐 싸기 달인 되기",
   "travel_tip_1_summary": "여행 짐 싸기 꿀팁 대방출!",
