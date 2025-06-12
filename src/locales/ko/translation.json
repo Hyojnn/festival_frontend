@@ -98,6 +98,9 @@
   "home_user_recommend_title": "{{userName}}님을 위한 맞춤 추천!",
   "home_welcome_subtitle": "다양한 축제를 검색해보세요.",
   "home_welcome_title": "페스티벌 타운에 오신 것을 환영합니다!",
+  "home_featured_regions_title" : "추천 지역",
+  "home_travel_tips_title" : "여행 꿀팁",
+  "home_partner_services_title": "파트너 서비스",
   "kakao_login_coming_soon": "카카오 로그인 기능은 준비중입니다.",
   "lang_chinese": "中文",
   "lang_english": "English",
@@ -225,6 +228,7 @@
   "validate_region_empty": "거주 지역을 선택해주세요.",
   "register_alert_fill_all_extended": "모든 필수 정보를 입력하고 거주 지역을 선택해주세요.",
   "nav_community": "커뮤니티",
+  "view_all_festivals_short": "전체 축제 보기",
 
 
   "community_page_title": "커뮤니티",
