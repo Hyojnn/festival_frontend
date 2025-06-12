@@ -724,7 +724,6 @@ class Home extends Component {
                                 <h3 className="footer-appname">{t('appName')}</h3>
                                 <p>{t('footer_address')}</p>
                                 <p>{t('footer_tel')} | {t('footer_email')}</p>
-                                <p>{t('footer_biz_info')} | {t('footer_tourism_biz_info')}</p>
                             </div>
                             <div className="footer-link-group">
                                 <h4>{t('footer_navigation_title')}</h4>
