@@ -285,7 +285,7 @@ class Home extends Component {
             const newRandomRegions = shuffled.slice(0, 4).map(region => ({
                 name: region.name,
                 description: region.description,
-                image: `${process.env.PUBLIC_URL}/images/placeholder.png`
+                image: region.image || `${process.env.PUBLIC_URL}/images/placeholder.png`  // ✅ 여기 수정
             }));
 
             sessionStorage.setItem(sessionKey, JSON.stringify(newRandomRegions));
@@ -296,6 +296,7 @@ class Home extends Component {
             this.setState({ regionsError: t('error_fetching_regions'), loadingRegions: false });
         }
     };
+
 
 
     fetchAndSetUpcomingFestivals = () => {
